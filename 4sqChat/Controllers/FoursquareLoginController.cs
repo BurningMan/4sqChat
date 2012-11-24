@@ -17,14 +17,8 @@ namespace _4sqChat.Controllers
     {
         //
         // GET: /FoursquareLogin/
-        public string _consumerkey;
-        public string _consumersecret;
-        public static oAuth4Square oAuth = new oAuth4Square();
         public Logic.Foursquare_oAuth FSQOAuth;
-        public string fsquareauthenticateurl;
-        public string fname;
-        public string lname;
-        public string jsonresponse;
+        
 
         public ActionResult Index()
         {
@@ -50,7 +44,10 @@ namespace _4sqChat.Controllers
             else
             {
                 if (FSQOAuth.makeAuthentication(Request["code"]))
+                {
                     ViewBag.suc = true;
+                    FSQOAuth.CheckIn("4d2892943c795481dc76cf9b");
+                }
                 else
                     ViewBag.suc = false;
             }

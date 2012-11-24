@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Configuration;
 using System.Web.Mvc;
@@ -11,10 +13,18 @@ using System.Text;
 
 namespace _4sqChat.Logic
 {
-    public class Foursquare_oAuth{
+    public class Foursquare_oAuth
+    {
         //https://github.com/aravamudham/foursquare-oauth-c--library/blob/master/FSquare.aspx.cs
         public oAuth4Square oAuth;
-        private string token { get; set; }
+        private string token;
+
+        public string Token
+        {
+            get { return token; }
+            set { this.token = value; }
+        }
+
         public Foursquare_oAuth(string consumerKey, string consumerSecret, string callbackUrl)
         {
             oAuth = new oAuth4Square();
@@ -40,6 +50,7 @@ namespace _4sqChat.Logic
                 fstoken = GetFSquareTokenDetails(retjson);
                 //the authenticated token we get back from foursquare
                 token = fstoken.AccessToken;
+                oAuth.Token = token;
             }
             catch (Exception oe)
             {
@@ -50,12 +61,37 @@ namespace _4sqChat.Logic
 
         private FSquareToken GetFSquareTokenDetails(string json)
         {
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(FSquareToken));
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof (FSquareToken));
             using (MemoryStream stream = new MemoryStream(Encoding.Unicode.GetBytes(json)))
             {
-                FSquareToken list = (FSquareToken)serializer.ReadObject(stream);
+                FSquareToken list = (FSquareToken) serializer.ReadObject(stream);
                 return list;
             }
+        }
+
+        public bool CheckIn(string venueID)
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "checkins/add?oauth_token="+token;
+            string postData = "{0}";
+            postData = String.Format(postData,venueID);
+
+            HttpPost(reqURL, postData);
+            return true;
+
+
+        }
+
+        private static string HttpPost(string uri, string parameters)
+        {
+
+            using (var wb = new WebClient())
+            {
+                var data = new NameValueCollection();
+                data["venueId"] = parameters;
+
+                var response = wb.UploadValues(uri, "POST", data);
+            }
+            return "";
         }
     }
 
@@ -63,6 +99,7 @@ namespace _4sqChat.Logic
     public class FSquareToken
     {
         private string f_accesstoken;
+
         [DataMember(Name = "access_token")]
         public string AccessToken
         {
