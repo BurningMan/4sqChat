@@ -46,7 +46,8 @@ namespace _4sqChat.Controllers
                 if (FSQOAuth.makeAuthentication(Request["code"]))
                 {
                     ViewBag.suc = true;
-                    FSQOAuth.CheckIn("4d2892943c795481dc76cf9b");
+
+                    ViewBag.userId = FSQOAuth.GetUserId();
                 }
                 else
                     ViewBag.suc = false;

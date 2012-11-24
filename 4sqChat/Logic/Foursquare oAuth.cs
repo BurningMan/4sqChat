@@ -10,6 +10,8 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace _4sqChat.Logic
 {
@@ -72,26 +74,50 @@ namespace _4sqChat.Logic
         public bool CheckIn(string venueID)
         {
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "checkins/add?oauth_token="+token;
-            string postData = "{0}";
-            postData = String.Format(postData,venueID);
-
+            
+            NameValueCollection postData = new NameValueCollection();
+            postData["venueId"] = venueID;
             HttpPost(reqURL, postData);
             return true;
-
-
         }
 
-        private static string HttpPost(string uri, string parameters)
+        public string GetUserId()
         {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self";
+            NameValueCollection nv = new NameValueCollection();
+            nv["oauth_token"] = token;
+            string result = HttpGet(reqURL, nv);
+            JObject obj = JObject.Parse(result);
+            return (string)obj["response"]["user"]["id"];
+        }
+        
 
+        private static string HttpPost(string uri, NameValueCollection data)
+        {
+            byte[] response = null;
             using (var wb = new WebClient())
             {
-                var data = new NameValueCollection();
-                data["venueId"] = parameters;
-
-                var response = wb.UploadValues(uri, "POST", data);
+                
+                response = wb.UploadValues(uri, "POST", data);
             }
-            return "";
+            return Encoding.UTF8.GetString(response,0, response.Length);
+        }
+
+        private static string HttpGet(string uri, NameValueCollection data)
+        {
+            string request = "?";
+            foreach (string key in data.AllKeys)
+            {
+                request += String.Format("{0}={1}", key, data[key])+"&";
+            }
+            request = request.Substring(0, request.Length - 1);
+            request = uri + request;
+            string res;
+            using (var wb = new WebClient())
+            {
+                res = wb.DownloadString(request);
+            }
+            return res;
         }
     }
 
