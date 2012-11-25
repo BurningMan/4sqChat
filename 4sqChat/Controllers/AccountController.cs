@@ -52,8 +52,7 @@ namespace _4sqChat.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            WebSecurity.Logout();
-
+            FormsAuthentication.SignOut();
             return RedirectToAction("Index", "Home");
         }
 

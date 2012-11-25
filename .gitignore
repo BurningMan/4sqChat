@@ -1,4 +1,5 @@
-
+#DBFiles
+*.mdf
 # mstest test results
 TestResults
 

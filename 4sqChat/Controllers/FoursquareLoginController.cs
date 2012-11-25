@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Text;
-
+using System.Web.Security;
+using _4sqChat.Logic;
+using _4sqChat.Models;
 
 
 namespace _4sqChat.Controllers
@@ -17,45 +20,94 @@ namespace _4sqChat.Controllers
     {
         //
         // GET: /FoursquareLogin/
-        public Logic.Foursquare_oAuth FSQOAuth;
-        
 
         public ActionResult Index()
         {
-            return View();
+            Models.FoursquareUserContext fsqDBContext = new FoursquareUserContext();
+            fsqDBContext.FoursquareUsers.Add(new FoursquareUserModel()
+                {
+                    FoursquareUserId = 1,
+                    Token = "fafaf",
+                    UserGuid = Guid.NewGuid(),
+                    UserName = "1"
+                });
+            return RedirectToAction("Login");
         }
 
         public ActionResult Login()
         {
-            
-            return View();
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Authenticate");
+            Models.FoursquareUserContext fsqDBContext = new FoursquareUserContext();
+            Models.FoursquareUserModel fsqUser = fsqDBContext.FoursquareUsers.Find(Convert.ToInt32(User.Identity.Name));
+            Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(fsqUser.Token);
+            try
+            {
+                FSQOAuth.GetUserId();
+                return RedirectToAction("Index", "Foursquare");
+            }
+            catch (WebException)
+            {
+                return RedirectToAction("Authenticate");
+            }
         }
 
         public ActionResult Authenticate()
         {
-            if (FSQOAuth == null)
-                FSQOAuth = new Logic.Foursquare_oAuth(ConfigurationManager.AppSettings["FSQClientID"],
-                    ConfigurationManager.AppSettings["FSQClientSecret"],
-                    ConfigurationManager.AppSettings["FSQCallback"]);
-            if (Request.QueryString["code"] == null)
+
+            Logic.FoursquareOAuth FSQOAuth = new Logic.FoursquareOAuth(null);
+            if (Request["code"] == null)
             {
                 return Redirect(FSQOAuth.GetAuthURL());
             }
-            else
+            if (FSQOAuth.makeAuthentication(Request["code"]))
             {
-                if (FSQOAuth.makeAuthentication(Request["code"]))
+                ViewBag.suc = true;
+                int userId = FSQOAuth.GetUserId();
+                FoursquareUserContext fsqDBContext = new FoursquareUserContext();
+                FoursquareUserModel curUser = fsqDBContext.FoursquareUsers.Find(userId);
+                if (curUser != null)
                 {
-                    ViewBag.suc = true;
+                    MembershipUser mUser = Membership.GetUser(curUser.UserGuid);
+                    if (curUser.Token != FSQOAuth.Token)
+                    {
+                        curUser.Token = FSQOAuth.Token;
+                        UpdateModel(curUser);
+                        fsqDBContext.SaveChanges();
+                    }
 
-                    ViewBag.userId = FSQOAuth.GetUserId();
+                    FormsAuthentication.SetAuthCookie(mUser.UserName, true);
                 }
                 else
-                    ViewBag.suc = false;
+                {
+                    curUser = new FoursquareUserModel();
+                    curUser.FoursquareUserId = userId;
+                    curUser.Token = FSQOAuth.Token;
+                    string password = Guid.NewGuid().ToString();
+
+                    MembershipCreateStatus createStatus;
+                    MembershipUser mUser;
+                    try
+                    {
+                        mUser = Membership.CreateUser(userId.ToString(), password);
+                    }
+                    catch (Exception)
+                    {
+                        mUser = Membership.FindUsersByName(userId.ToString())[userId.ToString()];
+                    }
+                    curUser.UserGuid = (Guid)mUser.ProviderUserKey;
+                    curUser.UserName = userId.ToString();
+                    fsqDBContext.FoursquareUsers.Add(curUser);
+                    fsqDBContext.SaveChanges();
+                    FormsAuthentication.SetAuthCookie(curUser.UserName, true);
+                }
             }
-            return View();
+            else
+                ViewBag.suc = false;
+            return RedirectToAction("Index");
+
 
         }
-        
 
     }
 
