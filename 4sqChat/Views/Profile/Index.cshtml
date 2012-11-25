@@ -1,0 +1,28 @@
+﻿@using System.Collections.Specialized
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@{
+    NameValueCollection tmp = (NameValueCollection) ViewBag.profile;
+    foreach (string key in tmp.AllKeys)
+    {
+        if (key != "Photo")
+        {
+            @key; <br/>@tmp[key]
+            ;
+             <br/>
+            <br/>
+        }
+        else
+        {
+            @key;
+            <br/>
+            <img src="@tmp[key]"/>
+        }
+
+
+    }
+}

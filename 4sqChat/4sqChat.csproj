@@ -188,6 +188,7 @@
     <Compile Include="Controllers\FoursquareController.cs" />
     <Compile Include="Controllers\FoursquareLoginController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -195,6 +196,7 @@
     <Compile Include="Logic\FoursquareOAuth.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\FoursquareUser.cs" />
+    <Compile Include="Models\Profile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +318,7 @@
     <Content Include="Views\Foursquare\Index.cshtml" />
     <Content Include="Views\Foursquare\NearbyVenues.cshtml" />
     <Content Include="Views\Foursquare\NearbyUsers.cshtml" />
+    <Content Include="Views\Profile\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

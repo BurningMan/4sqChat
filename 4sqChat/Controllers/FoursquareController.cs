@@ -42,7 +42,7 @@ namespace _4sqChat.Controllers
             ViewBag.users = res;
             return View();
         }
-        private string GetCurrentUserToken()
+        private string  GetCurrentUserToken()
         {
             if (!User.Identity.IsAuthenticated)
                 return null;

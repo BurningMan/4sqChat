@@ -72,7 +72,9 @@ namespace _4sqChat.Logic
                 return list;
             }
         }
-
+        // This method has no logical usage in this version of application , but can be possibly working in later versions
+        // Working
+        /*
         public bool CheckIn(string venueID)
         {
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "checkins/add?oauth_token="+token;
@@ -83,6 +85,7 @@ namespace _4sqChat.Logic
             return true;
         }
         
+         */
         public string GetLastVenue()
         {
            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/venuehistory";
@@ -91,6 +94,8 @@ namespace _4sqChat.Logic
             nv["afterTimestamp"] = Convert.ToString(Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 5000));
            string result = HttpGet(reqURL, nv);
            JObject obj = JObject.Parse(result);
+            if ((int) obj["response"]["venues"]["count"] == 0)
+                return null;
            return (string)obj["response"]["venues"]["items"][0]["venue"]["id"];
         }
 
@@ -180,6 +185,24 @@ namespace _4sqChat.Logic
                 res = wb.DownloadString(request);
             }
             return res;
+        }
+        public Profile GetProfileInfo(int Target_ID)
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/"+Target_ID;
+            var nv = new NameValueCollection();
+            nv["oauth_token"] = token;
+            string result = HttpGet(reqURL, nv);
+            JObject obj = JObject.Parse(result);
+            nv.Clear();
+            
+            nv["FirstName"] =""+ Convert.ToString(obj["response"]["user"]["firstName"]);
+            nv["LastName"] = "" + Convert.ToString(obj["response"]["user"]["lastName"]);
+            nv["Photo"] = "" + Convert.ToString(obj["response"]["user"]["photo"]);
+            nv["Gender"] = "" + Convert.ToString(obj["response"]["user"]["gender"]);
+            nv["Homecity"] = "" + Convert.ToString(obj["response"]["user"]["homeCity"]);
+            nv["scoremax"] = "" + Convert.ToString(obj["response"]["user"]["scores"]["max"]);
+            Profile targetProfile = new Profile(nv);
+            return targetProfile;
         }
     }
 
