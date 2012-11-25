@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "NearbyVenues";
+    
+}
+
+<h2>NearbyVenues</h2>
+
+@{
+
+    foreach (string venue in (List<string>)ViewBag.venues)
+    {
+        @Html.Label(venue);
+        Response.Write("<br>");
+    }
+}

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using _4sqChat.Logic;
+using _4sqChat.Models;
 
 namespace _4sqChat.Controllers
 {
@@ -18,6 +20,40 @@ namespace _4sqChat.Controllers
                 return View();
             return RedirectToAction("Authenticate", "FoursquareLogin");
         }
+
+        public ActionResult NearbyVenues()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "FoursquareLogin");
+            string token = GetCurrentUserToken();
+            Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
+            List<string> res = FSQOAuth.GetNearbyVenues();
+            ViewBag.venues = res;
+            return View();
+
+        }
+        public ActionResult NearbyUsers()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "FoursquareLogin");
+            string token = GetCurrentUserToken();
+            Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
+            List<int> res = FSQOAuth.GetNearByUsers();
+            ViewBag.users = res;
+            return View();
+        }
+        private string GetCurrentUserToken()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return null;
+            Models.FoursquareUserContext fsqDBContext = new FoursquareUserContext();
+            Models.FoursquareUserModel um = fsqDBContext.FoursquareUsers.Find(Convert.ToInt32(User.Identity.Name));
+            if (um != null)
+                return um.Token;
+            return null;
+
+        }
+
 
     }
 }

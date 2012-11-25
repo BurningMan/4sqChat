@@ -64,18 +64,19 @@ namespace _4sqChat.Controllers
             {
                 ViewBag.suc = true;
                 int userId = FSQOAuth.GetUserId();
+                string lastVenue = FSQOAuth.GetLastVenue();
                 FoursquareUserContext fsqDBContext = new FoursquareUserContext();
                 FoursquareUserModel curUser = fsqDBContext.FoursquareUsers.Find(userId);
                 if (curUser != null)
                 {
                     MembershipUser mUser = Membership.GetUser(curUser.UserGuid);
+                    curUser.LastVenueID = lastVenue;
                     if (curUser.Token != FSQOAuth.Token)
                     {
                         curUser.Token = FSQOAuth.Token;
-                        UpdateModel(curUser);
-                        fsqDBContext.SaveChanges();
                     }
-
+                    UpdateModel(curUser);
+                    fsqDBContext.SaveChanges();
                     FormsAuthentication.SetAuthCookie(mUser.UserName, true);
                 }
                 else
@@ -97,6 +98,7 @@ namespace _4sqChat.Controllers
                     }
                     curUser.UserGuid = (Guid)mUser.ProviderUserKey;
                     curUser.UserName = userId.ToString();
+                    curUser.LastVenueID = lastVenue;
                     fsqDBContext.FoursquareUsers.Add(curUser);
                     fsqDBContext.SaveChanges();
                     FormsAuthentication.SetAuthCookie(curUser.UserName, true);

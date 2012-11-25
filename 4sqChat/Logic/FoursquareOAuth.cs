@@ -12,6 +12,7 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using _4sqChat.Models;
 
 namespace _4sqChat.Logic
 {
@@ -80,6 +81,66 @@ namespace _4sqChat.Logic
             postData["venueId"] = venueID;
             HttpPost(reqURL, postData);
             return true;
+        }
+        
+        public string GetLastVenue()
+        {
+           string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/venuehistory";
+           NameValueCollection nv = new NameValueCollection();
+           nv["oauth_token"] = token;
+            nv["afterTimestamp"] = Convert.ToString(Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 5000));
+           string result = HttpGet(reqURL, nv);
+           JObject obj = JObject.Parse(result);
+           return (string)obj["response"]["venues"]["items"][0]["venue"]["id"];
+        }
+
+        private NameValueCollection GetLL()
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/" + GetLastVenue();
+            NameValueCollection nv = new NameValueCollection();
+            nv["oauth_token"] = token;
+            //nv["venueID"] = GetLastVenue();
+            string result = HttpGet(reqURL, nv);
+            JObject obj = JObject.Parse(result);
+            var LL = new NameValueCollection();
+            string lat = Convert.ToString(obj["response"]["venue"]["location"]["lat"]);
+            lat = lat.Replace(',', '.');
+            string lng = Convert.ToString(obj["response"]["venue"]["location"]["lng"]);
+            lng = lng.Replace(',', '.');
+            LL["ll"] = String.Format("{0},{1}", lat, lng);
+            return LL;
+            
+            
+        }
+
+        public List<string> GetNearbyVenues()
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/search";
+            NameValueCollection nv = GetLL();
+            nv["oauth_token"] = token;
+            nv["radius"] = "1000";
+            string result = HttpGet(reqURL, nv);
+            JObject obj = JObject.Parse(result);
+            var venues = new List<string>();
+            foreach (var venue in obj["response"]["groups"][0]["items"])
+            {
+                venues.Add((string) venue["id"]);
+            }
+            return venues;
+        }
+
+        public List<int> GetNearByUsers()
+        {
+            Models.FoursquareUserContext db = new FoursquareUserContext();
+            List<string> venueList = GetNearbyVenues();
+            List<int> res = new List<int>();
+            int userId = GetUserId();
+            foreach (string s in venueList)
+            {
+                IEnumerable<int> q = from o in db.FoursquareUsers where o.LastVenueID == s && o.FoursquareUserId != userId  select o.FoursquareUserId;
+                res.AddRange(q);
+            }
+            return res;
         }
 
         public int GetUserId()

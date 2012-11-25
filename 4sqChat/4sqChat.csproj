@@ -314,6 +314,8 @@
     </Content>
     <Content Include="Views\FoursquareLogin\Authenticate.cshtml" />
     <Content Include="Views\Foursquare\Index.cshtml" />
+    <Content Include="Views\Foursquare\NearbyVenues.cshtml" />
+    <Content Include="Views\Foursquare\NearbyUsers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

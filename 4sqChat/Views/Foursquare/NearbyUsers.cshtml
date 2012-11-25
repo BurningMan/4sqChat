@@ -1,0 +1,13 @@
+﻿@{
+    ViewBag.Title = "NearbyUsers";
+}
+
+<h2>NearbyUsers</h2>
+
+@{
+    foreach (int i in (List<int>)ViewBag.users)
+    {
+        @Html.Label(Convert.ToString(i));
+        @Html.DisplayText("<br>");
+    }
+}
