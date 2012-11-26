@@ -65,10 +65,10 @@ namespace _4sqChat.Logic
 
         private FSquareToken GetFSquareTokenDetails(string json)
         {
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof (FSquareToken));
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(FSquareToken));
             using (MemoryStream stream = new MemoryStream(Encoding.Unicode.GetBytes(json)))
             {
-                FSquareToken list = (FSquareToken) serializer.ReadObject(stream);
+                FSquareToken list = (FSquareToken)serializer.ReadObject(stream);
                 return list;
             }
         }
@@ -88,15 +88,15 @@ namespace _4sqChat.Logic
          */
         public string GetLastVenue()
         {
-           string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/venuehistory";
-           NameValueCollection nv = new NameValueCollection();
-           nv["oauth_token"] = token;
-            nv["afterTimestamp"] = Convert.ToString(Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 15000));
-           string result = HttpGet(reqURL, nv);
-           JObject obj = JObject.Parse(result);
-            if ((int) obj["response"]["venues"]["count"] == 0)
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/venuehistory";
+            NameValueCollection nv = new NameValueCollection();
+            nv["oauth_token"] = token;
+            nv["afterTimestamp"] = Convert.ToString(Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 100000));
+            string result = HttpGet(reqURL, nv);
+            JObject obj = JObject.Parse(result);
+            if ((int)obj["response"]["venues"]["count"] == 0)
                 return null;
-           return (string)obj["response"]["venues"]["items"][0]["venue"]["id"];
+            return (string)obj["response"]["venues"]["items"][0]["venue"]["id"];
         }
 
         private NameValueCollection GetLL()
@@ -114,18 +114,18 @@ namespace _4sqChat.Logic
             lng = lng.Replace(',', '.');
             LL["ll"] = String.Format("{0},{1}", lat, lng);
             return LL;
-            
-            
+
+
         }
         public NameValueCollection GetVenuesInfo(string venueID)
         {
-            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/"+venueID;
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/" + venueID;
             var nv = new NameValueCollection();
             nv["oauth_token"] = token;
-            string result = HttpGet(reqURL,nv);
+            string result = HttpGet(reqURL, nv);
             nv.Clear();
             JObject obj = JObject.Parse(result);
-            nv["name"] =  "" +(string)obj["response"]["venue"]["name"];
+            nv["name"] = "" + (string)obj["response"]["venue"]["name"];
             nv["contact"] = "" + (string)obj["response"]["venue"]["contact"]["phone"];
             nv["address"] = "" + (string)obj["response"]["venue"]["location"]["address"];
             nv["cat"] = "" + (string)obj["response"]["venue"]["categories"][0]["name"];
@@ -146,7 +146,7 @@ namespace _4sqChat.Logic
             var venues = new List<string>();
             foreach (var venue in obj["response"]["groups"][0]["items"])
             {
-                venues.Add((string) venue["id"]);
+                venues.Add((string)venue["id"]);
             }
             return venues;
         }
@@ -159,7 +159,7 @@ namespace _4sqChat.Logic
             int userId = GetUserId();
             foreach (string s in venueList)
             {
-                IEnumerable<int> q = from o in db.FoursquareUsers where o.LastVenueID == s && o.FoursquareUserId != userId  select o.FoursquareUserId;
+                IEnumerable<int> q = from o in db.FoursquareUsers where o.LastVenueID == s && o.FoursquareUserId != userId select o.FoursquareUserId;
                 res.AddRange(q);
             }
             return res;
@@ -174,17 +174,17 @@ namespace _4sqChat.Logic
             JObject obj = JObject.Parse(result);
             return Convert.ToInt32((string)obj["response"]["user"]["id"]);
         }
-        
+
 
         private static string HttpPost(string uri, NameValueCollection data)
         {
             byte[] response = null;
             using (var wb = new WebClient())
             {
-                
+
                 response = wb.UploadValues(uri, "POST", data);
             }
-            return Encoding.UTF8.GetString(response,0, response.Length);
+            return Encoding.UTF8.GetString(response, 0, response.Length);
         }
 
         private static string HttpGet(string uri, NameValueCollection data)
@@ -192,7 +192,7 @@ namespace _4sqChat.Logic
             string request = "?";
             foreach (string key in data.AllKeys)
             {
-                request += String.Format("{0}={1}", key, data[key])+"&";
+                request += String.Format("{0}={1}", key, data[key]) + "&";
             }
             request = request.Substring(0, request.Length - 1);
             request = uri + request;
@@ -205,14 +205,14 @@ namespace _4sqChat.Logic
         }
         public Profile GetProfileInfo(int Target_ID)
         {
-            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/"+Target_ID;
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/" + Target_ID;
             var nv = new NameValueCollection();
             nv["oauth_token"] = token;
             string result = HttpGet(reqURL, nv);
             JObject obj = JObject.Parse(result);
             nv.Clear();
-            
-            nv["FirstName"] =""+ Convert.ToString(obj["response"]["user"]["firstName"]);
+
+            nv["FirstName"] = "" + Convert.ToString(obj["response"]["user"]["firstName"]);
             nv["LastName"] = "" + Convert.ToString(obj["response"]["user"]["lastName"]);
             nv["Photo"] = "" + Convert.ToString(obj["response"]["user"]["photo"]);
             nv["Gender"] = "" + Convert.ToString(obj["response"]["user"]["gender"]);
