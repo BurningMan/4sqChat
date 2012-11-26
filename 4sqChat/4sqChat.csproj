@@ -192,14 +192,21 @@
     <Compile Include="Controllers\FoursquareController.cs" />
     <Compile Include="Controllers\FoursquareLoginController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Logic\FoursquareOAuth.cs" />
+    <Compile Include="Migrations\201211262203250_FoursquareUserContext.cs" />
+    <Compile Include="Migrations\201211262203250_FoursquareUserContext.Designer.cs">
+      <DependentUpon>201211262203250_FoursquareUserContext.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\FoursquareUser.cs" />
+    <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -262,6 +269,7 @@
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\Somee.pubxml" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
+    <Content Include="Scripts\Chat.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -324,12 +332,18 @@
     <Content Include="Views\Foursquare\NearbyVenues.cshtml" />
     <Content Include="Views\Foursquare\NearbyUsers.cshtml" />
     <Content Include="Views\Profile\Index.cshtml" />
+    <Content Include="Views\Foursquare\Chat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201211262203250_FoursquareUserContext.resx">
+      <DependentUpon>201211262203250_FoursquareUserContext.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -43,6 +43,7 @@ namespace _4sqChat.Controllers
             return View();
 
         }
+
         public ActionResult NearbyUsers()
         {
             if (!User.Identity.IsAuthenticated)
@@ -51,6 +52,14 @@ namespace _4sqChat.Controllers
             Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
             List<int> res = FSQOAuth.GetNearByUsers();
             ViewBag.users = res;
+            return View();
+        }
+
+        public ActionResult Chat(int toID)
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "FoursquareLogin");
+            ViewBag.to = toID;
             return View();
         }
         private string  GetCurrentUserToken()

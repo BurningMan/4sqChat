@@ -12,7 +12,7 @@ namespace _4sqChat.Controllers
         {
             ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
 
-            return View();
+            return RedirectToAction("Index", "Foursquare");
         }
 
         public ActionResult About()

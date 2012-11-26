@@ -31,6 +31,14 @@ namespace _4sqChat.Controllers
                     UserGuid = Guid.NewGuid(),
                     UserName = "1"
                 });
+            
+            fsqDBContext.Messages.Add(new MessageModel()
+                {
+                    From = 1,
+                    To = 1,
+                    Message = "daf",
+                    time = DateTime.Now
+                });
             return RedirectToAction("Login");
         }
 
@@ -62,7 +70,6 @@ namespace _4sqChat.Controllers
             }
             if (FSQOAuth.makeAuthentication(Request["code"]))
             {
-                ViewBag.suc = true;
                 int userId = FSQOAuth.GetUserId();
                 string lastVenue = FSQOAuth.GetLastVenue();
                 FoursquareUserContext fsqDBContext = new FoursquareUserContext();
@@ -86,7 +93,6 @@ namespace _4sqChat.Controllers
                     curUser.Token = FSQOAuth.Token;
                     string password = Guid.NewGuid().ToString();
 
-                    MembershipCreateStatus createStatus;
                     MembershipUser mUser;
                     try
                     {
@@ -104,8 +110,7 @@ namespace _4sqChat.Controllers
                     FormsAuthentication.SetAuthCookie(curUser.UserName, true);
                 }
             }
-            else
-                ViewBag.suc = false;
+           
             return RedirectToAction("Index");
 
 

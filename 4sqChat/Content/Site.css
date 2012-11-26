@@ -754,3 +754,12 @@ tr.pager td {
             margin: 0;
         }
 }
+
+#chat table {
+    left: 40%;
+    right: 40%;
+}
+
+#chat table tr{
+    height: 20px;
+}

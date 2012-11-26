@@ -15,6 +15,7 @@ namespace _4sqChat.Models
     public class FoursquareUserContext : DbContext
     {
         public DbSet<FoursquareUserModel> FoursquareUsers { get; set; }
+        public DbSet<MessageModel> Messages { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
