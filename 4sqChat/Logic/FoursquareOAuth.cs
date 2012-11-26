@@ -91,7 +91,7 @@ namespace _4sqChat.Logic
            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/venuehistory";
            NameValueCollection nv = new NameValueCollection();
            nv["oauth_token"] = token;
-            nv["afterTimestamp"] = Convert.ToString(Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 5000));
+            nv["afterTimestamp"] = Convert.ToString(Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 15000));
            string result = HttpGet(reqURL, nv);
            JObject obj = JObject.Parse(result);
             if ((int) obj["response"]["venues"]["count"] == 0)
@@ -117,9 +117,26 @@ namespace _4sqChat.Logic
             
             
         }
-
+        public NameValueCollection GetVenuesInfo(string venueID)
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/"+venueID;
+            var nv = new NameValueCollection();
+            nv["oauth_token"] = token;
+            string result = HttpGet(reqURL,nv);
+            nv.Clear();
+            JObject obj = JObject.Parse(result);
+            nv["name"] =  "" +(string)obj["response"]["venue"]["name"];
+            nv["contact"] = "" + (string)obj["response"]["venue"]["contact"]["phone"];
+            nv["address"] = "" + (string)obj["response"]["venue"]["location"]["address"];
+            nv["cat"] = "" + (string)obj["response"]["venue"]["categories"][0]["name"];
+            return nv;
+        }
         public List<string> GetNearbyVenues()
         {
+            if (GetLastVenue() == null)
+            {
+                return null;
+            }
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/search";
             NameValueCollection nv = GetLL();
             nv["oauth_token"] = token;

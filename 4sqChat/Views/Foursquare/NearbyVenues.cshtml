@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Collections.Specialized
+@{
     ViewBag.Title = "NearbyVenues";
     
 }
@@ -6,10 +7,28 @@
 <h2>NearbyVenues</h2>
 
 @{
-
-    foreach (string venue in (List<string>)ViewBag.venues)
+    List<NameValueCollection> venues = (List<NameValueCollection>) ViewBag.venues;
+    if (venues != null)
     {
-        @Html.Label(venue);
-        Response.Write("<br>");
+
+        foreach (NameValueCollection venue in venues)
+        {
+            @Html.Label(venue["name"])
+            ;
+                <br/>
+            @Html.Label(venue["contact"]);
+                <br/>
+            @Html.Label(venue["contact"]); 
+               <br/>
+            @Html.Label(venue["address"]);
+                <br/>
+            @Html.Label(venue["cat"]);  
+              <br/>
+        }
+    }
+    else
+    {
+      @Html.Label("Please first check in via native App or Foursquare web site right : ");
+    <a href="http://foursquare.com">Here</a>
     }
 }

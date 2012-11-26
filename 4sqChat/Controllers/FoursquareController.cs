@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -28,7 +29,17 @@ namespace _4sqChat.Controllers
             string token = GetCurrentUserToken();
             Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
             List<string> res = FSQOAuth.GetNearbyVenues();
-            ViewBag.venues = res;
+            List<NameValueCollection> venues = new List<NameValueCollection>();
+            if (res == null)
+            {
+                ViewBag.venues = null;
+                return View();
+            }
+            foreach (var re in res)
+            {
+                venues.Add(FSQOAuth.GetVenuesInfo(re));
+            }
+            ViewBag.venues = venues;
             return View();
 
         }
