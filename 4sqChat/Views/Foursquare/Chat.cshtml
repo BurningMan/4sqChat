@@ -5,15 +5,36 @@
 <h2>Chat</h2>
 <script language="javascript" type="text/javascript">
     var from = '@(User.Identity.Name)';
-    var to = '@((string)ViewBag.to)';
-    $document.ready(function () {
-        $.getJSON("api/message/GetMessagesByKey/" + from + "_" + to, function(data) {
-            for (var i = i.length - 1; i >= 0 && i >= i.length - 10; i--) {
-                $("mes" + i).text(data[i].Message);
-            }
-            
+    var to = '@(Convert.ToString(ViewBag.to))';
+    function getMessages() {
+        $(document).ready(function() {
+            $.getJSON("/api/message/GetMessagesByKeys/?keys=" + from + "_" + to, function(data) {
+                for (var i = data.length - 1; i >= 0 && i >= data.length - 10; i--) {
+                    $("#mes" + i).text(data[i].Message);
+                }
+
+            });
         });
-    });
+    
+    }
+
+    function sendMessage() {
+        $(document).ready(function () {
+            var msg = $("#msgInput").val();
+            $.getJSON("/api/message/GetSendMessage/?messag=" + from + "_" + to + "_" + msg, function (data) {
+                if (data == true) {
+                    $("#msgInput").val("");
+                } else {
+                    $("#msgInput").val("Error");
+                }
+                    
+                }
+            );
+        });
+        
+    }
+
+    setInterval(getMessages, 3000);
 </script>
 <div id="chat">
     <table>
@@ -28,4 +49,6 @@
         <tr id="mes9"></tr>
         <tr id="mes10"></tr>
     </table>
+    <input type="text" id="msgInput"/>
+    <button type="button" value="Send" onclick="sendMessage();"></button>
 </div>

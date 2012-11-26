@@ -55,11 +55,11 @@ namespace _4sqChat.Controllers
             return View();
         }
 
-        public ActionResult Chat(int toID)
+        public ActionResult Chat(int id)
         {
             if (!User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "FoursquareLogin");
-            ViewBag.to = toID;
+            ViewBag.to = id;
             return View();
         }
         private string  GetCurrentUserToken()
