@@ -5,9 +5,11 @@
 <h2>NearbyUsers</h2>
 
 @{
-    foreach (int i in (List<int>)ViewBag.users)
+    List<int> users = (List<int>) ViewBag.users;
+    List<string> names = (List<string>) ViewBag.names;
+    for (int i = 0; i < users.Count; ++i)
     {
-        @Html.Label(Convert.ToString(i));
+        <a href="Chat.cshtml/@(users[i])">@(names[i])</a>
         @Html.DisplayText("<br>");
     }
 }

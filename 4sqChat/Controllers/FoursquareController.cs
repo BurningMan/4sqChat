@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using _4sqChat.Logic;
 using _4sqChat.Models;
+using log4net;
 
 namespace _4sqChat.Controllers
 {
@@ -14,6 +16,7 @@ namespace _4sqChat.Controllers
     {
         //
         // GET: /Foursquare/
+        ILog logger = LogManager.GetLogger(typeof(FoursquareController));
 
         public ActionResult Index()
         {
@@ -27,18 +30,30 @@ namespace _4sqChat.Controllers
             if (!User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "FoursquareLogin");
             string token = GetCurrentUserToken();
+            logger.Debug("Got token "+token);
             Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
+
             List<string> res = FSQOAuth.GetNearbyVenues();
+            logger.Debug("Got venues " + res.Count);
             List<NameValueCollection> venues = new List<NameValueCollection>();
             if (res == null)
             {
                 ViewBag.venues = null;
                 return View();
             }
-            foreach (var re in res)
+            try
             {
-                venues.Add(FSQOAuth.GetVenuesInfo(re));
+                foreach (var re in res)
+                {
+                    venues.Add(FSQOAuth.GetVenuesInfo(re));
+                }
+
             }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+            }
+            logger.Debug("Got venues info");
             ViewBag.venues = venues;
             return View();
 
@@ -50,8 +65,38 @@ namespace _4sqChat.Controllers
                 return RedirectToAction("Index", "FoursquareLogin");
             string token = GetCurrentUserToken();
             Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
+            Models.FoursquareUserContext db = new FoursquareUserContext();
+            IEnumerable<FoursquareUserModel> foursquareUsers = db.FoursquareUsers;
+            foreach (var foursquareUserModel in foursquareUsers)
+            {
+                
+                Logic.FoursquareOAuth tmp = new FoursquareOAuth(foursquareUserModel.Token);
+                foursquareUserModel.LastVenueID = tmp.GetLastVenue();
+                UpdateModel(foursquareUserModel);
+                db.SaveChanges();
+                logger.Debug("Got last venue "+foursquareUserModel.FoursquareUserId);
+            }
+            logger.Debug("Got all venues");
             List<int> res = FSQOAuth.GetNearByUsers();
+            logger.Debug("got nearby users");
+            List<string> names= new List<string>();
+            ProfileController PC = new ProfileController();
+            for (int i = 0; i < res.Count; ++i)
+            {
+                NameValueCollection tmp;
+                if (res[i] != null)
+                {
+                    tmp = PC.GetProfileInfo(res[i]);
+                    names.Add(tmp["firstname"]);
+                }
+                else
+                {
+                    res.Remove(i);
+                }
+            }
+            logger.Debug("got profile info");
             ViewBag.users = res;
+            ViewBag.names = names;
             return View();
         }
 

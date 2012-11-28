@@ -13,7 +13,7 @@ namespace _4sqChat.Controllers
     {
         //
         // GET: /Profile/
-        private NameValueCollection GetProfileInfo(int targetId)
+        public NameValueCollection GetProfileInfo(int targetId)
         {
             string token = GetCurrentUserToken(); 
             Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);

@@ -13,11 +13,14 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using _4sqChat.Models;
+using log4net;
 
 namespace _4sqChat.Logic
 {
-    public class FoursquareOAuth
-    {
+    public class FoursquareOAuth{
+    
+        ILog logger = LogManager.GetLogger(typeof(FoursquareOAuth));
+
         //https://github.com/aravamudham/foursquare-oauth-c--library/blob/master/FSquare.aspx.cs
         public oAuth4Square oAuth;
         private string token;
@@ -93,6 +96,7 @@ namespace _4sqChat.Logic
             nv["oauth_token"] = token;
             nv["afterTimestamp"] = Convert.ToString(Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 100000));
             string result = HttpGet(reqURL, nv);
+            logger.Debug(result);
             JObject obj = JObject.Parse(result);
             if ((int)obj["response"]["venues"]["count"] == 0)
                 return null;
@@ -137,6 +141,7 @@ namespace _4sqChat.Logic
             {
                 return null;
             }
+            logger.Debug("Got last venue");
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/search";
             NameValueCollection nv = GetLL();
             nv["oauth_token"] = token;
@@ -203,6 +208,7 @@ namespace _4sqChat.Logic
             }
             return res;
         }
+
         public Profile GetProfileInfo(int Target_ID)
         {
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/" + Target_ID;
