@@ -91,16 +91,18 @@ namespace _4sqChat.Logic
          */
         public string GetLastVenue()
         {
-            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/venuehistory";
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/checkins";
             NameValueCollection nv = new NameValueCollection();
             nv["oauth_token"] = token;
-            nv["afterTimestamp"] = Convert.ToString(Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 100000));
+            nv["afterTimestamp"] =
+                Convert.ToString(
+                    Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 5000));
+            nv["sort"] = "newestfirst";
             string result = HttpGet(reqURL, nv);
-            logger.Debug(result);
             JObject obj = JObject.Parse(result);
-            if ((int)obj["response"]["venues"]["count"] == 0)
+            if ((int)obj["response"]["checkins"]["count"] == 0)
                 return null;
-            return (string)obj["response"]["venues"]["items"][0]["venue"]["id"];
+            return (string)obj["response"]["checkins"]["items"][0]["venue"]["id"];
         }
 
         private NameValueCollection GetLL()
@@ -123,10 +125,12 @@ namespace _4sqChat.Logic
         }
         public NameValueCollection GetVenuesInfo(string venueID)
         {
+            logger.Debug("Getting venue info for " + venueID);
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/" + venueID;
             var nv = new NameValueCollection();
             nv["oauth_token"] = token;
             string result = HttpGet(reqURL, nv);
+            logger.Debug(result);
             nv.Clear();
             JObject obj = JObject.Parse(result);
             nv["name"] = "" + (string)obj["response"]["venue"]["name"];
@@ -189,7 +193,16 @@ namespace _4sqChat.Logic
 
                 response = wb.UploadValues(uri, "POST", data);
             }
-            return Encoding.UTF8.GetString(response, 0, response.Length);
+            Encoding cp1251 = Encoding.GetEncoding("windows-1251");
+            return cp1251.GetString(response, 0, response.Length);
+        }
+
+        public static string Utf8toUtf16(byte[] source)
+        {
+            Encoding utf8 = Encoding.UTF8;
+            string text = utf8.GetString(source);
+            return text;
+
         }
 
         private static string HttpGet(string uri, NameValueCollection data)
@@ -202,11 +215,12 @@ namespace _4sqChat.Logic
             request = request.Substring(0, request.Length - 1);
             request = uri + request;
             string res;
+            byte[] bytes;
             using (var wb = new WebClient())
             {
-                res = wb.DownloadString(request);
+                bytes = wb.DownloadData(request);
             }
-            return res;
+            return Utf8toUtf16(bytes);
         }
 
         public Profile GetProfileInfo(int Target_ID)

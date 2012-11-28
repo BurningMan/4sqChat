@@ -34,9 +34,15 @@ namespace _4sqChat.Controllers
             Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
 
             List<string> res = FSQOAuth.GetNearbyVenues();
+            if (res == null)
+            {
+                ViewBag.venues = null;
+                return View();
+            }
+
             logger.Debug("Got venues " + res.Count);
             List<NameValueCollection> venues = new List<NameValueCollection>();
-            if (res == null)
+            if (res.Count == 0)
             {
                 ViewBag.venues = null;
                 return View();
@@ -73,20 +79,21 @@ namespace _4sqChat.Controllers
                 Logic.FoursquareOAuth tmp = new FoursquareOAuth(foursquareUserModel.Token);
                 foursquareUserModel.LastVenueID = tmp.GetLastVenue();
                 UpdateModel(foursquareUserModel);
-                db.SaveChanges();
+                
+                
                 logger.Debug("Got last venue "+foursquareUserModel.FoursquareUserId);
             }
+            db.SaveChanges();
             logger.Debug("Got all venues");
             List<int> res = FSQOAuth.GetNearByUsers();
             logger.Debug("got nearby users");
             List<string> names= new List<string>();
-            ProfileController PC = new ProfileController();
             for (int i = 0; i < res.Count; ++i)
             {
                 NameValueCollection tmp;
                 if (res[i] != null)
                 {
-                    tmp = PC.GetProfileInfo(res[i]);
+                    tmp = GetProfileInfo(res[i]);
                     names.Add(tmp["firstname"]);
                 }
                 else
@@ -99,7 +106,18 @@ namespace _4sqChat.Controllers
             ViewBag.names = names;
             return View();
         }
-
+        public NameValueCollection GetProfileInfo(int targetId)
+        {
+            string token = GetCurrentUserToken();
+            Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
+            Profile pf = FSQOAuth.GetProfileInfo(targetId);
+            Models.FoursquareUserContext db = new FoursquareUserContext();
+            int userID = FSQOAuth.GetUserId();
+            FoursquareUserModel um = db.FoursquareUsers.Find(userID);
+            NameValueCollection nv = pf.getInfo(um.IsPremium);
+            return nv;
+        }
+        
         public ActionResult Chat(int id)
         {
             if (!User.Identity.IsAuthenticated)

@@ -9,7 +9,7 @@
     List<string> names = (List<string>) ViewBag.names;
     for (int i = 0; i < users.Count; ++i)
     {
-        <a href="Chat.cshtml/@(users[i])">@(names[i])</a>
+        <a href="Chat/@(users[i])">@(names[i])</a>
         @Html.DisplayText("<br>");
     }
 }

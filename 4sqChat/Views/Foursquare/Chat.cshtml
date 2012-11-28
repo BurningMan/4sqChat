@@ -9,8 +9,11 @@
     function getMessages() {
         $(document).ready(function() {
             $.getJSON("/api/message/GetMessagesByKeys/?keys=" + from + "_" + to, function(data) {
-                for (var i = data.length - 1; i >= 0 && i >= data.length - 10; i--) {
-                    $("#mes" + i).text(data[i].Message);
+                for (var i = 1; i <=10  && 0 <= data.length - i; i++) {
+                    messageContent = "";
+                    curLen = data.length - i;
+                    messageContent += data[curLen].From + ":\r\n" + data[curLen].Message;
+                    $("#mes" + (11 - i)).text(messageContent);
                 }
 
             });
@@ -21,7 +24,7 @@
     function sendMessage() {
         $(document).ready(function () {
             var msg = $("#msgInput").val();
-            $.getJSON("/api/message/GetSendMessage/?messag=" + from + "_" + to + "_" + msg, function (data) {
+            $.getJSON("/api/message/GetSendMessage/?from=" + from + "&to=" + to + "&messag='" + encodeURIComponent(msg) + "'", function (data) {
                 if (data == true) {
                     $("#msgInput").val("");
                 } else {
@@ -34,7 +37,7 @@
         
     }
 
-    setInterval(getMessages, 3000);
+    setInterval(getMessages, 1500);
 </script>
 <div id="chat">
     <table>

@@ -43,15 +43,13 @@ namespace _4sqChat.Controllers
         }
 
         
-        public bool GetSendMessage(string messag)
+        public bool GetSendMessage(string from, string to,string messag)
         {
-            string[] tmp = messag.Split('_');
-            int from = Convert.ToInt32(tmp[0]);
-            int to = Convert.ToInt32(tmp[1]);
-            string message = tmp[2];
+            
+            string message = messag;
             MessageModel m = new MessageModel();
-            m.To = to;
-            m.From = from;
+            m.To = Convert.ToInt32(to);
+            m.From = Convert.ToInt32(from);
             m.Message = message;
             m.time = DateTime.Now;
             repository.InsertMessage(m);
@@ -59,5 +57,6 @@ namespace _4sqChat.Controllers
 
             return true;
         }
+
     }
 }
