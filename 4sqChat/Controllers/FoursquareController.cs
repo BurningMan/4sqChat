@@ -20,9 +20,7 @@ namespace _4sqChat.Controllers
 
         public ActionResult Index()
         {
-            if(User.Identity.IsAuthenticated)
-                return View();
-            return RedirectToAction("Authenticate", "FoursquareLogin");
+            return View();
         }
 
         public ActionResult NearbyVenues()

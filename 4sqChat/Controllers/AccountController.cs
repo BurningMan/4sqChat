@@ -53,7 +53,7 @@ namespace _4sqChat.Controllers
         public ActionResult LogOff()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Foursquare");
         }
 
         //
