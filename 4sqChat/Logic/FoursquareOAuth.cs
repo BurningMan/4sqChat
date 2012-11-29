@@ -96,7 +96,7 @@ namespace _4sqChat.Logic
             nv["oauth_token"] = token;
             nv["afterTimestamp"] =
                 Convert.ToString(
-                    Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 5000));
+                    Convert.ToInt64((DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds - 55000));
             nv["sort"] = "newestfirst";
             string result = HttpGet(reqURL, nv);
             JObject obj = JObject.Parse(result);

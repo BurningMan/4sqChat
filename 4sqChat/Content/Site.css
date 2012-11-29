@@ -1,5 +1,5 @@
 ﻿html {
-    background-color: #e2e2e2;
+    background-color: #fff;
     margin: 0;
     padding: 0;
 }
@@ -91,23 +91,31 @@ h5, h6 {
     }
 
 
+   
+
 /* main layout
 ----------------------------------------------------------*/
 .content-wrapper {
     margin: 0 auto;
     max-width: 960px;
+    background: #fff;
 }
 
 #body {
-    background-color: #efeeef;
+    background-color: #72C9EB;
     clear: both;
     padding-bottom: 35px;
+    padding: 20px;
+
 }
 
     .main-content {
-        background: url("../Images/accent.png") no-repeat;
         padding-left: 10px;
-        padding-top: 30px;
+        padding-top: 5px;
+        box-shadow:0 0 10px 0 #555555;
+        -webkit-box-shadow:0 0 10px 0 #555555;
+        -moz-box-shadow:0 0 10px 0 #555555;
+        border-radius: 5px;
     }
 
     .featured + .main-content {
@@ -120,7 +128,7 @@ header .content-wrapper {
 
 footer {
     clear: both;
-    background-color: #e2e2e2;
+    background-color: #fff;
     font-size: .8em;
     height: 100px;
 }
@@ -129,7 +137,7 @@ footer {
 /* site title
 ----------------------------------------------------------*/
 .site-title {
-    color: #c8c8c8;
+    color: #3C3D42;
     font-family: Rockwell, Consolas, "Courier New", Courier, monospace;
     font-size: 2.3em;
     margin: 0;
@@ -137,7 +145,7 @@ footer {
 
 .site-title a, .site-title a:hover, .site-title a:active {
     background: none;
-    color: #c8c8c8;
+    color: #3C3D42;
     outline: none;
     text-decoration: none;
 }
@@ -763,3 +771,10 @@ tr.pager td {
 #chat table tr{
     height: 20px;
 }
+
+#chat {
+    padding: 100px;
+    padding-top: 10px;
+
+}
+

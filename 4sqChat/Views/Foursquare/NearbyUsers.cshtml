@@ -2,8 +2,9 @@
     ViewBag.Title = "NearbyUsers";
 }
 
-<h2>NearbyUsers</h2>
+<h2 style="color:#444; font-size: 14pt;margin-left: 100px; width:200px; border-bottom: 1px solid #aaa">NearbyUsers</h2>
 
+<div id="chat">
 @{
     List<int> users = (List<int>) ViewBag.users;
     List<string> names = (List<string>) ViewBag.names;
@@ -13,3 +14,4 @@
         @Html.DisplayText("<br>");
     }
 }
+</div>

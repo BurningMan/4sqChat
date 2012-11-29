@@ -2,7 +2,7 @@
     ViewBag.Title = "Chat";
 }
 
-<h2>Chat</h2>
+<h2 style="color:#444; font-size: 14pt;margin-left: 100px; width:100px; border-bottom: 1px solid #aaa">Chat</h2>
 <script language="javascript" type="text/javascript">
     var from = '@(User.Identity.Name)';
     var to = '@(Convert.ToString(ViewBag.to))';
@@ -40,7 +40,7 @@
     setInterval(getMessages, 1500);
 </script>
 <div id="chat">
-    <table>
+    <table id="ctable">
         <tr id="mes1"></tr>
         <tr id="mes2"></tr>
         <tr id="mes3"></tr>
@@ -52,6 +52,11 @@
         <tr id="mes9"></tr>
         <tr id="mes10"></tr>
     </table>
-    <input type="text" id="msgInput"/>
-    <button type="button" value="Send" onclick="sendMessage();"></button>
+    <table width="100%">
+        <tr>
+            <td><input type="text" id="msgInput" style="width:100%"/></td>
+            <td><button onclick="sendMessage();">Send</button></td>
+        </tr>
+    </table>
+    
 </div>

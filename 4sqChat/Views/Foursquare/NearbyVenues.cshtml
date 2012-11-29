@@ -4,8 +4,9 @@
     
 }
 
-<h2>NearbyVenues</h2>
+<h2 style="color:#444; font-size: 14pt;margin-left: 100px; width:200px; border-bottom: 1px solid #aaa">NearbyVenues</h2>
 
+<div id="chat" style="font-size: 10pt;">
 @{
     List<NameValueCollection> venues = (List<NameValueCollection>) ViewBag.venues;
     if (venues != null)
@@ -13,17 +14,16 @@
 
         foreach (NameValueCollection venue in venues)
         {
-            @Html.Label(venue["name"])
-            ;
-                <br/>
-            @Html.Label(venue["contact"]);
-                <br/>
-            @Html.Label(venue["contact"]); 
-               <br/>
-            @Html.Label(venue["address"]);
-                <br/>
-            @Html.Label(venue["cat"]);  
-              <br/>
+           <span style="font-size: 12pt;color: #222;"> @(venue["name"])</span>
+            <div style="color:#555; padding-left: 10px;">
+                Contacts: @(venue["contact"]) 
+                <br>
+                Address: @(venue["address"])
+                <br>
+                Category: @(venue["cat"])  
+                <br>
+            </div>
+    <br>
         }
     }
     else
@@ -32,3 +32,4 @@
     <a href="http://foursquare.com">Here</a>
     }
 }
+    </div>
