@@ -1,4 +1,5 @@
 ﻿@using System.Collections.Specialized
+@using _4sqChat.Logic
 @{
     ViewBag.Title = "NearbyVenues";
     
@@ -8,19 +9,19 @@
 
 <div id="chat" style="font-size: 10pt;">
 @{
-    List<NameValueCollection> venues = (List<NameValueCollection>) ViewBag.venues;
+    List<FoursquareOAuth.Venue> venues = (List<FoursquareOAuth.Venue>)ViewBag.venues;
     if (venues != null)
     {
 
-        foreach (NameValueCollection venue in venues)
+        foreach (FoursquareOAuth.Venue venue in venues)
         {
-           <span style="font-size: 12pt;color: #222;"> @(venue["name"])</span>
+           <span style="font-size: 12pt;color: #222;"> @(venue.Name)</span>
             <div style="color:#555; padding-left: 10px;">
-                Contacts: @(venue["contact"]) 
+                Contacts: @(venue.Contact) 
                 <br>
-                Address: @(venue["address"])
+                Address: @(venue.address)
                 <br>
-                Category: @(venue["cat"])  
+                Category: @(venue.category)  
                 <br>
             </div>
     <br>

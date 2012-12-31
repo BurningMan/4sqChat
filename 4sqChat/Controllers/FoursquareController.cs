@@ -39,7 +39,7 @@ namespace _4sqChat.Controllers
             }
 
             logger.Debug("Got venues " + res.Count);
-            List<NameValueCollection> venues = new List<NameValueCollection>();
+            List<FoursquareOAuth.Venue> venues = new List<FoursquareOAuth.Venue>();
             if (res.Count == 0)
             {
                 ViewBag.venues = null;

@@ -18,6 +18,15 @@ using log4net;
 namespace _4sqChat.Logic
 {
     public class FoursquareOAuth{
+
+        public struct Venue
+        {
+            public string id { get; set; }
+            public  string Name { get; set; }
+            public string Contact { get; set; }
+            public string address { get; set; }
+            public string category { get; set; }
+        }
     
         ILog logger = LogManager.GetLogger(typeof(FoursquareOAuth));
 
@@ -75,6 +84,7 @@ namespace _4sqChat.Logic
                 return list;
             }
         }
+
         // This method has no logical usage in this version of application , but can be possibly working in later versions
         // Working
         /*
@@ -123,7 +133,7 @@ namespace _4sqChat.Logic
 
 
         }
-        public NameValueCollection GetVenuesInfo(string venueID)
+        public Venue GetVenuesInfo(string venueID)
         {
             logger.Debug("Getting venue info for " + venueID);
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/" + venueID;
@@ -133,11 +143,17 @@ namespace _4sqChat.Logic
             logger.Debug(result);
             nv.Clear();
             JObject obj = JObject.Parse(result);
-            nv["name"] = "" + (string)obj["response"]["venue"]["name"];
+            Venue venue = new Venue();
+            venue.id = "" + (string)obj["response"]["venue"]["id"];
+            venue.Name = "" + (string)obj["response"]["venue"]["name"];
+            venue.Contact = "" + (string)obj["response"]["venue"]["contact"]["phone"];
+            venue.address = "" + (string)obj["response"]["venue"]["location"]["address"];
+            venue.category = "" + (string)obj["response"]["venue"]["categories"][0]["name"]; 
+            /*nv["name"] = "" + (string)obj["response"]["venue"]["name"];
             nv["contact"] = "" + (string)obj["response"]["venue"]["contact"]["phone"];
             nv["address"] = "" + (string)obj["response"]["venue"]["location"]["address"];
-            nv["cat"] = "" + (string)obj["response"]["venue"]["categories"][0]["name"];
-            return nv;
+            nv["cat"] = "" + (string)obj["response"]["venue"]["categories"][0]["name"];*/
+            return venue;
         }
         public List<string> GetNearbyVenues()
         {
