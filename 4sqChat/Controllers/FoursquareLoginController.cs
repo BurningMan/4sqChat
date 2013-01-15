@@ -16,6 +16,17 @@ using _4sqChat.Models;
 
 namespace _4sqChat.Controllers
 {
+    struct UserAuthInfo
+    {
+        public int userId;
+        public string token;
+
+        public UserAuthInfo(int userId, string token)
+        {
+            this.userId = userId;
+            this.token = token;
+        }
+    }
     public class FoursquareLoginController : Controller
     {
         //
@@ -71,7 +82,16 @@ namespace _4sqChat.Controllers
             if (FSQOAuth.makeAuthentication(Request["code"]))
             {
                 int userId = FSQOAuth.GetUserId();
-                string lastVenue = FSQOAuth.GetLastVenue();
+                string lastVenue;
+                try
+                {
+                     lastVenue = FSQOAuth.GetLastVenue();
+                }
+                catch (Exception e)
+                {
+                    lastVenue = null;
+                }
+
                 FoursquareUserContext fsqDBContext = new FoursquareUserContext();
                 FoursquareUserModel curUser = fsqDBContext.FoursquareUsers.Find(userId);
                 if (curUser != null)
@@ -114,6 +134,22 @@ namespace _4sqChat.Controllers
             return RedirectToAction("Index");
 
 
+        }
+        
+        public ActionResult AuthInfo()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login");
+            }
+            FoursquareUserContext fsqDBContext = new FoursquareUserContext();
+            FoursquareUserModel curUser = fsqDBContext.FoursquareUsers.Find(Convert.ToInt32(User.Identity.Name));
+            if (curUser != null)
+            {
+                UserAuthInfo res = new UserAuthInfo(curUser.FoursquareUserId, curUser.Token);
+                return Json(res, JsonRequestBehavior.AllowGet);
+            }
+            return null;
         }
 
     }

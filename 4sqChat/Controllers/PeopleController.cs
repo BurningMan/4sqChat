@@ -38,6 +38,7 @@ namespace _4sqChat.Controllers
             }
             return nearbyUsers;
         }
+
         public Profile GetNearbyUserById(int id)
         {
             InitializeOauth();

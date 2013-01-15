@@ -22,7 +22,7 @@ namespace _4sqChat.Logic
         public struct Venue
         {
             public string id { get; set; }
-            public  string Name { get; set; }
+            public string Name { get; set; }
             public string Contact { get; set; }
             public string address { get; set; }
             public string category { get; set; }
@@ -40,6 +40,7 @@ namespace _4sqChat.Logic
             set { this.token = value; }
         }
 
+        
         public FoursquareOAuth(string userToken)
         {
             oAuth = new oAuth4Square();
@@ -49,6 +50,7 @@ namespace _4sqChat.Logic
             Token = userToken;
         }
 
+
         public string GetAuthURL()
         {
             string res = "{0}?client_id={1}&response_type=code&redirect_uri={2}";
@@ -56,6 +58,11 @@ namespace _4sqChat.Logic
             return res;
         }
 
+        /// <summary>
+        /// Authenticates user using code from Foursquare response
+        /// </summary>
+        /// <param name="code">Response code</param>
+        /// <returns></returns>
         public bool makeAuthentication(string code)
         {
             string retjson;
@@ -115,6 +122,10 @@ namespace _4sqChat.Logic
             return (string)obj["response"]["checkins"]["items"][0]["venue"]["id"];
         }
 
+        /// <summary>
+        /// Gets venue latitude and lontitude
+        /// </summary>
+        /// <returns>Latitude and lontitude separated by commas</returns>
         private NameValueCollection GetLL()
         {
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/" + GetLastVenue();
@@ -130,9 +141,9 @@ namespace _4sqChat.Logic
             lng = lng.Replace(',', '.');
             LL["ll"] = String.Format("{0},{1}", lat, lng);
             return LL;
-
-
         }
+
+
         public Venue GetVenuesInfo(string venueID)
         {
             logger.Debug("Getting venue info for " + venueID);
@@ -155,6 +166,8 @@ namespace _4sqChat.Logic
             nv["cat"] = "" + (string)obj["response"]["venue"]["categories"][0]["name"];*/
             return venue;
         }
+
+
         public List<string> GetNearbyVenues()
         {
             if (GetLastVenue() == null)
@@ -200,7 +213,12 @@ namespace _4sqChat.Logic
             return Convert.ToInt32((string)obj["response"]["user"]["id"]);
         }
 
-
+        /// <summary>
+        /// Makes POST request
+        /// </summary>
+        /// <param name="uri">Request URI</param>
+        /// <param name="data">POST parameters</param>
+        /// <returns>Request result</returns>
         private static string HttpPost(string uri, NameValueCollection data)
         {
             byte[] response = null;
@@ -212,6 +230,7 @@ namespace _4sqChat.Logic
             Encoding cp1251 = Encoding.GetEncoding("windows-1251");
             return cp1251.GetString(response, 0, response.Length);
         }
+
 
         public static string Utf8toUtf16(byte[] source)
         {
@@ -239,6 +258,11 @@ namespace _4sqChat.Logic
             return Utf8toUtf16(bytes);
         }
 
+        /// <summary>
+        /// Profile info for user
+        /// </summary>
+        /// <param name="Target_ID">Foursquare User ID</param>
+        /// <returns>User Profile</returns>
         public Profile GetProfileInfo(int Target_ID)
         {
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/" + Target_ID;
