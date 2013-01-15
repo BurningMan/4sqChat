@@ -203,6 +203,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Logic\AuthService.cs" />
     <Compile Include="Logic\FoursquareOAuth.cs" />
     <Compile Include="Migrations\201211262203250_FoursquareUserContext.cs" />
     <Compile Include="Migrations\201211262203250_FoursquareUserContext.Designer.cs">
