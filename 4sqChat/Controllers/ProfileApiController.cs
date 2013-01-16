@@ -33,5 +33,17 @@ namespace _4sqChat.Controllers
             return null;
         }
 
+        public Profile GetMyProfile(string userId, string token)
+        {
+            int uId = Convert.ToInt32(userId);
+            if (AuthService.ValidateAuthData(uId, token))
+            {
+                FoursquareOAuth fsqOAuth = new FoursquareOAuth(token);
+                Profile res = fsqOAuth.GetProfileInfo(uId);
+                return res;
+            }
+            return null;
+        }
+
     }
 }
