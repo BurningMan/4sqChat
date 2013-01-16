@@ -18,16 +18,21 @@ namespace _4sqChat.Controllers
             foursquareOAuth = new FoursquareOAuth(token);
         }
 
-        public List<Profile> GetNearbyUsers(string token)
+        public List<Profile> GetNearbyUsers(string userId, string token)
         {
-            InitializeOauth(token);
-            List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers();
-            List<Profile> nearbyUsers = new List<Profile>();
-            foreach (var nearbyUsersId in nearbyUsersIds)
+            int uId = Convert.ToInt32(userId);
+            if (AuthService.ValidateAuthData(uId, token))
             {
-                nearbyUsers.Add(foursquareOAuth.GetProfileInfo(nearbyUsersId));
+                InitializeOauth(token);
+                List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers();
+                List<Profile> nearbyUsers = new List<Profile>();
+                foreach (var nearbyUsersId in nearbyUsersIds)
+                {
+                    nearbyUsers.Add(foursquareOAuth.GetProfileInfo(nearbyUsersId));
+                }
+                return nearbyUsers;
             }
-            return nearbyUsers;
+            return null;
         }
 
         public Profile GetNearbyUserById(string userId, string token, int id)

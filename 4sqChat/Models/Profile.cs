@@ -2,17 +2,25 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 
 namespace _4sqChat.Models
 {
+    [DataContract]
     public class Profile
     {
+        [DataMember]
         private string Photo;
+        [DataMember]
         private string FirstName;
+        [DataMember]
         private string lastName;
+        [DataMember]
         private string homecity;
+        [DataMember]
         private string gender;
+        [DataMember]
         private string scoreMAX;
 
         private NameValueCollection getInfoStandart()
