@@ -198,6 +198,7 @@
     <Compile Include="Controllers\MessageController.cs" />
     <Compile Include="Controllers\NearbyVenuesController.cs" />
     <Compile Include="Controllers\PeopleController.cs" />
+    <Compile Include="Controllers\ProfileApiController.cs" />
     <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
