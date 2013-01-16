@@ -1,0 +1,40 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="_4sqApp.Xroads"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot представляет корневую сетку, где размещается все содержимое страницы-->
+    <Grid x:Name="LayoutRoot" Background="LightSkyBlue">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel содержит имя приложения и заголовок страницы-->
+        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock Text="4sqApp" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock Text="You " Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        </StackPanel>
+
+        <!--ContentPanel – поместите здесь дополнительное содержимое-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+            <Image Name ="Image1" HorizontalAlignment="Left" Height="228" Margin="25,39,0,0" VerticalAlignment="Top" Width="212"/>
+            <TextBlock Name ="textblock1" HorizontalAlignment="Left" Margin="258,39,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="228" Width="176" Foreground="#FF52FD02" FontSize="200" />
+            <Button Content="Button" HorizontalAlignment="Left" Height="126" Margin="10,299,0,0" VerticalAlignment="Top" Width="424"/>
+            <Button Content="Button" HorizontalAlignment="Left" Margin="10,430,0,0" VerticalAlignment="Top" Height="126" Width="424"/>
+
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>
