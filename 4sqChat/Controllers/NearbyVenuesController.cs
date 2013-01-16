@@ -17,13 +17,14 @@ namespace _4sqChat.Controllers
         private FoursquareOAuth foursquareOAuth;
         public List<FoursquareOAuth.Venue> nv = new List<FoursquareOAuth.Venue>();
         private List<FoursquareOAuth.Venue> NearbyVenues;
-        private void InitializeOauth()
+        private void InitializeOauth(string token)
         {
-            foursquareOAuth = new FoursquareOAuth(CurrentUserToken());
+            foursquareOAuth = new FoursquareOAuth(token);
         }
-        public void FillNV()
+
+        public void FillNV(string token)
         {
-            InitializeOauth();
+            InitializeOauth(token);
             NearbyVenues = new List<FoursquareOAuth.Venue>();
             List<String> NearbyVenuesIds = foursquareOAuth.GetNearbyVenues();
             foreach (var nearbyVenuesId in NearbyVenuesIds)
@@ -31,27 +32,27 @@ namespace _4sqChat.Controllers
                 NearbyVenues.Add(foursquareOAuth.GetVenuesInfo(nearbyVenuesId));
             }
         }
-        public List<FoursquareOAuth.Venue> GetAllVenues()
-        {
-            FillNV();
-            return NearbyVenues;
-        }
 
-        public FoursquareOAuth.Venue GetVenueInfo(string id)
+        public List<FoursquareOAuth.Venue> GetAllVenues(string userId, string token)
         {
-            InitializeOauth();
-            return foursquareOAuth.GetVenuesInfo(id);
-        }
-
-        public string CurrentUserToken()
-        {
-            if (!User.Identity.IsAuthenticated)
-                return null;
-            Models.FoursquareUserContext fsqDBContext = new FoursquareUserContext();
-            Models.FoursquareUserModel um = fsqDBContext.FoursquareUsers.Find(Convert.ToInt32(User.Identity.Name));
-            if (um != null)
-                return um.Token;
+            int uId = Convert.ToInt32(userId);
+            if (AuthService.ValidateAuthData(uId, token))
+            {
+                FillNV(token);
+                return NearbyVenues;
+            }
             return null;
+        }
+
+        public FoursquareOAuth.Venue GetVenueInfo(string userId, string token, string id)
+        {
+            int uId = Convert.ToInt32(userId);
+            if (AuthService.ValidateAuthData(uId, token)) 
+            {
+                InitializeOauth(token);
+                return foursquareOAuth.GetVenuesInfo(id);
+            }
+            return new FoursquareOAuth.Venue();
         }
 
     }
