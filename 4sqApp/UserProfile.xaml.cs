@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
@@ -15,16 +14,15 @@ using _4sqApp.Logic;
 
 namespace _4sqApp
 {
-    public partial class Xroads : PhoneApplicationPage
+    public partial class UserProfile : PhoneApplicationPage
     {
+        public static long profileId;
         public static AuthData authData;
         private string result;
-
-        public Xroads()
+        public UserProfile()
         {
-
             InitializeComponent();
-            GetProfile(authData.userId);
+            GetProfile(Convert.ToInt32(profileId));
         }
 
         public void DownloadStringHandler(object sender, DownloadStringCompletedEventArgs eventArgs)
@@ -42,33 +40,11 @@ namespace _4sqApp
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters["userId"] = authData.userId.ToString();
             parameters["token"] = authData.token;
+            parameters["targetId"] = userId.ToString();
             IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
 
-            RequestService.MakeGetRequest(authData, (string) settings["appURL"] + "api/ProfileApi", parameters,
+            RequestService.MakeGetRequest(authData, (string)settings["appURL"] + "api/ProfileApi", parameters,
                                           DownloadStringHandler);
         }
-
-        private void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-            NearbyVenues.authData = authData;
-            Dispatcher.BeginInvoke(() => NavigationService.Navigate(new Uri("/NearbyVenues.xaml", UriKind.Relative)));
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            Chat.authData = authData;
-            Dispatcher.BeginInvoke(() => NavigationService.Navigate(new Uri("/Chat.xaml", UriKind.Relative)));
-        }
-
-        private void Button_Click_4(object sender, RoutedEventArgs e)
-        {
-            ChatList.authData = authData;
-            Dispatcher.BeginInvoke(() => NavigationService.Navigate(new Uri("/ChatList.xaml", UriKind.Relative)));
-        }
-
     }
 }
