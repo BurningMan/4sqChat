@@ -21,7 +21,7 @@ namespace _4sqChat.Controllers
             Models.FoursquareUserContext db = new FoursquareUserContext();
             int userID = FSQOAuth.GetUserId();
             FoursquareUserModel um = db.FoursquareUsers.Find(userID);
-            NameValueCollection nv = pf.getInfo(um.IsPremium); 
+            NameValueCollection nv = pf.getInfo(true); 
             return nv;
         }
         private string GetCurrentUserToken()

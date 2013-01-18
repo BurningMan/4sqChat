@@ -1,28 +1,40 @@
 ﻿@using System.Collections.Specialized
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Profile";
+
+    NameValueCollection tmp = (NameValueCollection)ViewBag.profile;
 }
 
-<h2>Index</h2>
+<div id="profile-wrapper" align="center">
+    <table width="60%">
+        <tr>
+            <td valign="top" align="right" width="110px">
+                @{
+                    <div style="padding-right:35px" align="left">
+                        <img src="@tmp["Photo"]" width="100px" height="100px"/>
+                        <h4>@tmp["firstname"] @tmp["lastname"]</h4>
+                    </div>
+                } 
+           
+            </td>
+            <td valign="top" align="left" style="padding:0px">
+                @{
 
-@{
-    NameValueCollection tmp = (NameValueCollection) ViewBag.profile;
-    foreach (string key in tmp.AllKeys)
-    {
-        if (key != "Photo")
-        {
-            @key; <br/>@tmp[key]
-            ;
-             <br/>
-            <br/>
-        }
-        else
-        {
-            @key;
-            <br/>
-            <img src="@tmp[key]"/>
-        }
+                    <table style="margin:0px">
+                        <tr><td>@("City: ")</td><td> <i>@tmp["homecity"]</i></td></tr>
+                        <tr><td>@("Sex: ") </td><td><i>@tmp["gender"]</i><br/></td></tr>
+                        <tr><td>@("Score: ")</td><td> <i>@tmp["scoremax"]</i> (* Maximum checkin score all over user history)<br/>  </td></tr> 
+                    </table>
+                }
+                
+                <br/>
+                <a href="~/Foursquare/ChatList"  class="btn btn-success" style="color:#fff">Your Chat History</a>
+                <a href="~/Foursquare/NearbyUsers"  class="btn btn-success" style="color:#fff">Start new Chat!</a>
+            </td>
+        
+        </tr>
+    </table>
 
+    
+</div>
 
-    }
-}

@@ -24,13 +24,20 @@ namespace _4sqChat.Controllers
             if (AuthService.ValidateAuthData(uId, token))
             {
                 InitializeOauth(token);
-                List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers();
-                List<Profile> nearbyUsers = new List<Profile>();
-                foreach (var nearbyUsersId in nearbyUsersIds)
+                try
                 {
-                    nearbyUsers.Add(foursquareOAuth.GetProfileInfo(nearbyUsersId));
+                    List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers();
+                    List<Profile> nearbyUsers = new List<Profile>();
+                    foreach (var nearbyUsersId in nearbyUsersIds)
+                    {
+                        nearbyUsers.Add(foursquareOAuth.GetProfileInfo(nearbyUsersId));
+                    }
+                    return nearbyUsers;
                 }
-                return nearbyUsers;
+                catch (Exception e)
+                {
+                    return new List<Profile>();
+                }
             }
             return null;
         }
@@ -42,6 +49,28 @@ namespace _4sqChat.Controllers
             {
                 InitializeOauth(token);
                 return foursquareOAuth.GetProfileInfo(id);
+            }
+            return null;
+        }
+
+
+        public List<int> GetNearByIds(string userId, string token, string a, string b)
+        {
+            int uId = Convert.ToInt32(userId);
+            if (AuthService.ValidateAuthData(uId, token))
+            {
+                InitializeOauth(token);
+                try
+                {
+
+
+                    List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers();
+                    return nearbyUsersIds;
+                }
+                catch (Exception e)
+                {
+                    return new List<int>();
+                }
             }
             return null;
         }

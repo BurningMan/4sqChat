@@ -20,6 +20,8 @@ namespace _4sqChat.Controllers
 
         public ActionResult Index()
         {
+            if (User.Identity.IsAuthenticated)
+                return Redirect("/Profile?targetID=" + User.Identity.Name);
             return View();
         }
 
@@ -123,6 +125,36 @@ namespace _4sqChat.Controllers
             ViewBag.to = id;
             return View();
         }
+
+        public ActionResult ChatList()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "FoursquareLogin");
+            IMessageRepository repository = new MessageRepository(new FoursquareUserContext());
+            int uId = Convert.ToInt32(User.Identity.Name);
+            IEnumerable<MessageModel> messages =
+                repository.GetMessages().Where(model => model.From == uId || model.To == uId);
+            List<int> res = new List<int>();
+            foreach (MessageModel messageModel in messages)
+            {
+                if (messageModel.From != uId)
+                    res.Add(messageModel.From);
+                else
+                    res.Add(messageModel.To);
+            }
+            ViewBag.Chats = res.Distinct();
+            List<string> names = new List<string>();
+            foreach (int id in ViewBag.Chats)
+            {
+                NameValueCollection tmp;
+
+                tmp = GetProfileInfo(id);
+                names.Add(tmp["firstname"]);
+            }
+            ViewBag.Names = names;
+            return View();
+        }
+
         private string  GetCurrentUserToken()
         {
             if (!User.Identity.IsAuthenticated)

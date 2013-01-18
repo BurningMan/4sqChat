@@ -1,0 +1,19 @@
+﻿@using System.Collections
+@{
+    ViewBag.Title = "ChatList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 style="color:#444; font-size: 14pt;margin-left: 100px; width:200px;">Chat History</h2>
+<div id="chat">
+    @{
+        List<string> names = (List<string>) ViewBag.Names;
+        int count = 0;
+    foreach (int o in (IEnumerable<int>)ViewBag.Chats)
+    {
+        @(names[count])<a class="schat" href="Chat/@(o)">Open chat history</a>
+        @Html.DisplayText("<br>");
+        count++;
+    }
+}
+    </div>

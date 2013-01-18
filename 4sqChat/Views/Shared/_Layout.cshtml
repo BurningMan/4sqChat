@@ -6,14 +6,17 @@
         <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <meta name="viewport" content="width=device-width" />
         @Styles.Render("~/Content/css")
+        @Styles.Render("~/Content/bootstrapcss")
         @Scripts.Render("~/bundles/modernizr")
         @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/Content/bootstrap")
+        
     </head>
     <body>
         <header>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p class="site-title"><img src="~/Content/logo.png" style="margin-top: -20px" align="middle"/>@Html.ActionLink("4sqChat", "Index", "Home")</p>
+                    <p class="site-title"><img src="~/Content/logo.png" style="margin-top: -10px" align="middle"/>@Html.ActionLink("4sqChat", "Index", "Home")</p>
                 </div>
                 <div class="float-right">
                     <section id="login">
@@ -21,9 +24,15 @@
                     </section>
                     <nav>
                         <ul id="menu">
-                            <li>@Html.ActionLink("Home", "Index", "Foursquare")</li>
-                            <li>@Html.ActionLink("Nearby Venues", "NearbyVenues", "Foursquare")</li>
-                            <li>@Html.ActionLink("Nearby Users", "NearbyUsers", "Foursquare")</li>
+                            @{
+                                if (User.Identity.IsAuthenticated)
+                                {
+                                    <li>@Html.ActionLink("Home", "Index", "Foursquare")</li>
+                                    <li>@Html.ActionLink("Chat History", "ChatList", "Foursquare")</li>
+                                    <li>@Html.ActionLink("Nearby Venues", "NearbyVenues", "Foursquare")</li>
+                                    <li>@Html.ActionLink("Nearby Users", "NearbyUsers", "Foursquare")</li>
+                                }
+                            }
                         </ul>
                     </nav>
                 </div>

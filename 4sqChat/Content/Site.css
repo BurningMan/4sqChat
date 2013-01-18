@@ -6,7 +6,6 @@
 
 body {
     background-color: #fff;
-    border-top: solid 10px #000;
     color: #333;
     font-size: .85em;
     font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
@@ -99,6 +98,9 @@ h5, h6 {
     margin: 0 auto;
     max-width: 960px;
     background: #fff;
+    padding: 15px;
+    padding-bottom: 40px;
+
 }
 
 #body {
@@ -123,7 +125,8 @@ h5, h6 {
     }
 
 header .content-wrapper {
-    padding-top: 20px; 
+    padding-top: 20px;
+    padding-bottom: 60px;
 }
 
 footer {
@@ -158,14 +161,31 @@ footer {
     font-size: .85em;
     margin: 0 0 10px;
     text-align: right;
+
+     
 }
 
     #login a {
-        background-color: #d3dce0;
+        -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    border-radius: 4px;
+    background: #87D1EE;
+        color: #ffffff;
+        text-shadow: 0px 0px 3px #1FA2D6;
+
         margin-left: 10px;
         margin-right: 3px;
-        padding: 2px 3px;
+        padding: 6px;
         text-decoration: none;
+    }
+
+    #login a:hover {
+        margin-left: 10px;
+        margin-right: 3px;
+        padding: 6px;
+        text-decoration: none;
+        background: #B3E2F4;
     }
 
     #login a.username {
@@ -203,13 +223,14 @@ ul#menu {
 
         ul#menu li a {
             background: none;
-            color: #999;
+            color: #444;
             text-decoration: none;
         }
 
         ul#menu li a:hover {
             color: #333;
             text-decoration: none;
+            border-bottom: 3px #72C9EB solid;
         }
 
 
@@ -775,6 +796,31 @@ tr.pager td {
 #chat {
     padding: 100px;
     padding-top: 10px;
+                 padding-left:150px;
 
 }
 
+
+
+ #chat a {
+        -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    border-radius: 4px;
+    background: #00B359;
+        color: #ffffff;
+        text-shadow: 0px 0px 3px #009973;
+
+        margin-left: 10px;
+        margin-right: 3px;
+        padding: 6px;
+        text-decoration: none;
+    }
+
+    #chat a:hover {
+        margin-left: 10px;
+        margin-right: 3px;
+        padding: 6px;
+        text-decoration: none;
+        background: #00CC66;
+    }

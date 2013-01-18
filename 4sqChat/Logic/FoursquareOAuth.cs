@@ -117,7 +117,7 @@ namespace _4sqChat.Logic
             nv["sort"] = "newestfirst";
             string result = HttpGet(reqURL, nv);
             JObject obj = JObject.Parse(result);
-            if ((int)obj["response"]["checkins"]["count"] == 0)
+            if ((int)obj["response"]["checkins"]["items"].Count() == 0)
                 return null;
             return (string)obj["response"]["checkins"]["items"][0]["venue"]["id"];
         }
@@ -193,6 +193,10 @@ namespace _4sqChat.Logic
         {
             Models.FoursquareUserContext db = new FoursquareUserContext();
             List<string> venueList = GetNearbyVenues();
+            if (venueList == null)
+            {
+                return new List<int>();
+            }
             List<int> res = new List<int>();
             int userId = GetUserId();
             foreach (string s in venueList)

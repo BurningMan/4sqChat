@@ -38,6 +38,8 @@ namespace _4sqChat
                         "~/Content/themes/base/jquery.ui.datepicker.css",
                         "~/Content/themes/base/jquery.ui.progressbar.css",
                         "~/Content/themes/base/jquery.ui.theme.css"));
+            bundles.Add(new StyleBundle("~/Content/bootstrapcss").Include("~/Content/bootstrap/css/*.css"));
+            bundles.Add(new ScriptBundle("~/Content/bootstrap").Include("~/Content/bootstrap/js/*.js"));
         }
     }
 }

@@ -2,5 +2,17 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
-<center>@Html.ActionLink("LogIN", "Index", "FoursquareLogin")</center>
+@{
+    if (!User.Identity.IsAuthenticated)
+    {
+        <div style="text-align: center;">
+            <h4 style="color: #444">Welcome to Foursquare Chat
+                <br/>
+                Please Log In using your Foursquare account
+            </h4> 
+            <a href="~/FoursquareLogin"  class="btn btn-success" style="color:#fff">Log In via Foursquare</a>
+        </div>
+    }
+    
+    
+}

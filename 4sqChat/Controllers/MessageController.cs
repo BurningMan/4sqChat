@@ -58,5 +58,14 @@ namespace _4sqChat.Controllers
             return true;
         }
 
+        public int GetMessageCount(string from, string to)
+        {
+            int f = Convert.ToInt32(from);
+            int t = Convert.ToInt32(to);
+            int count = repository.GetMessagesByKey(f, t).Count();
+            count += repository.GetMessagesByKey(t, f).Count();
+            return count;
+        }
+
     }
 }

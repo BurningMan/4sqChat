@@ -26,10 +26,17 @@ namespace _4sqChat.Controllers
         {
             InitializeOauth(token);
             NearbyVenues = new List<FoursquareOAuth.Venue>();
-            List<String> NearbyVenuesIds = foursquareOAuth.GetNearbyVenues();
-            foreach (var nearbyVenuesId in NearbyVenuesIds)
+            try
             {
-                NearbyVenues.Add(foursquareOAuth.GetVenuesInfo(nearbyVenuesId));
+                List<String> NearbyVenuesIds = foursquareOAuth.GetNearbyVenues();
+                foreach (var nearbyVenuesId in NearbyVenuesIds)
+                {
+                    NearbyVenues.Add(foursquareOAuth.GetVenuesInfo(nearbyVenuesId));
+                }
+            }
+            catch (Exception e)
+            {
+                NearbyVenues = new List<FoursquareOAuth.Venue>();
             }
         }
 

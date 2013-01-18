@@ -2,7 +2,7 @@
     ViewBag.Title = "NearbyUsers";
 }
 
-<h2 style="color:#444; font-size: 14pt;margin-left: 100px; width:200px; border-bottom: 1px solid #aaa">NearbyUsers</h2>
+<h2 style="color:#444; font-size: 14pt;margin-left: 100px; width:200px;">Nearby Users</h2><br/>
 
 <div id="chat">
 @{
@@ -10,7 +10,10 @@
     List<string> names = (List<string>) ViewBag.names;
     for (int i = 0; i < users.Count; ++i)
     {
-        <a href="Chat/@(users[i])">@(names[i])</a>
+        <img src="~/Content/tab-me.png" width="27px" height="27px" style="margin-top: -10px" align="middle"/>
+        @(names[i])
+     
+        <a class="schat" href="Chat/@(users[i])">Start chat!</a>
         @Html.DisplayText("<br>");
     }
 }
