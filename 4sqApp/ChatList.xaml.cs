@@ -19,7 +19,9 @@ namespace _4sqApp
         private List<int> chats; 
         public ChatList()
         {
+            
             InitializeComponent();
+            GetChats();
         }
         public void DownloadStringHandler(object sender, DownloadStringCompletedEventArgs e)
         {
@@ -49,12 +51,13 @@ namespace _4sqApp
         private Button createNotepadeButton(String id)
         {
             Button button = new Button();
-            button.Width = 438;
+            button.Width = 300;
             button.Height = 100;
             button.FontSize = 20;
             button.Click += new RoutedEventHandler(buttonClick);
             button.FontSize = 16;
             button.Name = id;
+            button.Content = id;
             return button;
         }
 

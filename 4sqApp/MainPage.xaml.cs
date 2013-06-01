@@ -80,7 +80,7 @@ namespace _4sqApp
 
         private void webbrowser1_LoadCompleted(object sender, NavigationEventArgs e)
         {
-            if (e.Uri.ToString() == "http://4sqchat.somee.com/Foursquare")
+            if (e.Uri.ToString().StartsWith("http://4sqchat.somee.com/Profile")) 
             {
                 GetAuthData();
             }
