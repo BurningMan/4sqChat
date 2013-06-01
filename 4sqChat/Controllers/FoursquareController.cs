@@ -32,8 +32,8 @@ namespace _4sqChat.Controllers
             string token = GetCurrentUserToken();
             logger.Debug("Got token "+token);
             Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
-
-            List<string> res = FSQOAuth.GetNearbyVenues();
+            //TODO add parameters
+            List<string> res = FSQOAuth.GetNearbyVenues(1000);
             if (res == null)
             {
                 ViewBag.venues = null;
@@ -117,6 +117,18 @@ namespace _4sqChat.Controllers
             NameValueCollection nv = pf.getInfo(um.IsPremium);
             return nv;
         }
+
+        public ActionResult RandomChat()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "FoursquareLogin");
+            String token = GetCurrentUserToken();
+            FoursquareOAuth foursquareOAuth = new FoursquareOAuth(token);
+            List<int> users = foursquareOAuth.GetNearByUsers();
+            Random random = new Random();
+            int pos = random.Next(0, users.Count);
+            return RedirectToAction("Chat", new {id = users[pos]});
+        }
         
         public ActionResult Chat(int id)
         {
@@ -154,6 +166,8 @@ namespace _4sqChat.Controllers
             ViewBag.Names = names;
             return View();
         }
+
+        
 
         private string  GetCurrentUserToken()
         {

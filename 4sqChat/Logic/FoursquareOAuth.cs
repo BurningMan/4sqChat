@@ -168,7 +168,7 @@ namespace _4sqChat.Logic
         }
 
 
-        public List<string> GetNearbyVenues()
+        public List<string> GetNearbyVenues(long radius)
         {
             if (GetLastVenue() == null)
             {
@@ -178,7 +178,7 @@ namespace _4sqChat.Logic
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "venues/search";
             NameValueCollection nv = GetLL();
             nv["oauth_token"] = token;
-            nv["radius"] = "1000";
+            nv["radius"] = radius.ToString();
             string result = HttpGet(reqURL, nv);
             JObject obj = JObject.Parse(result);
             var venues = new List<string>();
@@ -192,7 +192,8 @@ namespace _4sqChat.Logic
         public List<int> GetNearByUsers()
         {
             Models.FoursquareUserContext db = new FoursquareUserContext();
-            List<string> venueList = GetNearbyVenues();
+            //TODO add param
+            List<string> venueList = GetNearbyVenues(1000);
             if (venueList == null)
             {
                 return new List<int>();

@@ -52,6 +52,7 @@ namespace _4sqChat.Controllers
             m.From = Convert.ToInt32(from);
             m.Message = message;
             m.time = DateTime.Now;
+            m.type = "Message";
             repository.InsertMessage(m);
             repository.Save();
 

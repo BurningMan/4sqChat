@@ -77,5 +77,6 @@ namespace _4sqChat.Models
         public int To { get; set; }
         public string Message { get; set; }
         public DateTime time { get; set; }
+        public String type { get; set; }
     }
 }

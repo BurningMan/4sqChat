@@ -28,7 +28,8 @@ namespace _4sqChat.Controllers
             NearbyVenues = new List<FoursquareOAuth.Venue>();
             try
             {
-                List<String> NearbyVenuesIds = foursquareOAuth.GetNearbyVenues();
+                //TODO add parameters
+                List<String> NearbyVenuesIds = foursquareOAuth.GetNearbyVenues(1000);
                 foreach (var nearbyVenuesId in NearbyVenuesIds)
                 {
                     NearbyVenues.Add(foursquareOAuth.GetVenuesInfo(nearbyVenuesId));
