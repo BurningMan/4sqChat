@@ -2,27 +2,34 @@
     ViewBag.Title = "Chat";
 }
 
-<h2 style="color:#444; font-size: 14pt;margin-left: 150px; width:100px;">Chat</h2>
+<h2 style="color: #444; font-size: 14pt; margin-left: 150px; width: 100px;">Chat</h2>
 <script language="javascript" type="text/javascript">
     var from = '@(User.Identity.Name)';
     var to = '@(Convert.ToString(ViewBag.to))';
+    var token = '@(ViewBag.token)';
     function getMessages() {
-        $(document).ready(function() {
-            $.getJSON("/api/message/GetMessagesByKeys/?keys=" + from + "_" + to, function(data) {
-                for (var i = 1; i <=10  && 0 <= data.length - i; i++) {
+        $(document).ready(function () {
+            $.getJSON("/api/message/GetMessagesByKeys/?keys=" + from + "_" + to, function (data) {
+                for (var i = 1; i <= 10 && 0 <= data.length - i; i++) {
                     messageContent = "";
                     curLen = data.length - i;
                     if (data[curLen].From == from)
                         messageContent += "<span style='color:#00994D'>You</span>";
                     else
                         messageContent += "<span style='color:#008AE6'>Anonymous</span>";
+
                     messageContent += ":\r\n" + data[curLen].Message;
+
+                    if (data[curLen].type == "Invite" && data[curLen].From == to) {
+                        messageContent += '<button class="friendApprove btn btn-success" onclick="approveFriend()">Approve</button>';
+                    }
+                    
                     $("#mes" + (11 - i)).html(messageContent);
                 }
 
             });
         });
-    
+
     }
 
     function sendMessage() {
@@ -34,12 +41,35 @@
                 } else {
                     $("#msgInput").val("Error");
                 }
-                    
-                }
+
+            }
             );
         });
-        
+
     }
+
+    function makeFriendRequest() {
+        $(document).ready(function () {
+            $.getJSON("/api/profileapi/GetMakeFriends/?token=" + token + "&userId=" + from + "&targetId=" + to,
+                function (data) {
+                    if (data == true) {
+                        $('#makeFriendsButton').hide();
+                    }
+                });
+        });
+    }
+
+    function approveFriend() {
+        $(document).ready(function () {
+            $.getJSON("/api/profileapi/GetApproveFriend?token=" + token + "&userId=" + from + "&targetId=" + to,
+                function (data) {
+                    if (data == true) {
+                        $('.friendApprove').hide();
+                    }
+                });
+        });
+    }
+
 
     setInterval(getMessages, 1500);
 </script>
@@ -58,9 +88,18 @@
     </table>
     <table width="100%" stlye="padding:0px">
         <tr>
-            <td><input class="input-block-level" placeholder="Message" type="text" id="msgInput" style="width:100%"/></td>
-            <td valign="top"><button class="btn btn-success" onclick="sendMessage();">Send</button></td>
+            <td>
+                <input class="input-block-level" placeholder="Message" type="text" id="msgInput" style="width: 100%" /></td>
+            <td valign="top">
+                <button class="btn btn-success" onclick="sendMessage();">Send</button></td>
         </tr>
     </table>
-    
+    @{
+        if (!(bool)ViewBag.isFriend)
+        {
+            
+        <a class="btn btn-success" href="#" id="makeFriendsButton" onclick="makeFriendRequest()">Make friends</a>
+        
+        }
+    }
 </div>

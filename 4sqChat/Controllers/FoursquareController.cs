@@ -135,6 +135,10 @@ namespace _4sqChat.Controllers
             if (!User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "FoursquareLogin");
             ViewBag.to = id;
+            FoursquareOAuth foursquareOAuth = new FoursquareOAuth(GetCurrentUserToken());
+            bool isFriend = foursquareOAuth.CheckForFriendship(id);
+            ViewBag.isFriend = isFriend;
+            ViewBag.token = GetCurrentUserToken();
             return View();
         }
 

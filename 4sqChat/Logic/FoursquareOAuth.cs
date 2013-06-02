@@ -17,7 +17,8 @@ using log4net;
 
 namespace _4sqChat.Logic
 {
-    public class FoursquareOAuth{
+    public class FoursquareOAuth
+    {
 
         public struct Venue
         {
@@ -27,7 +28,7 @@ namespace _4sqChat.Logic
             public string address { get; set; }
             public string category { get; set; }
         }
-    
+
         ILog logger = LogManager.GetLogger(typeof(FoursquareOAuth));
 
         //https://github.com/aravamudham/foursquare-oauth-c--library/blob/master/FSquare.aspx.cs
@@ -40,7 +41,7 @@ namespace _4sqChat.Logic
             set { this.token = value; }
         }
 
-        
+
         public FoursquareOAuth(string userToken)
         {
             oAuth = new oAuth4Square();
@@ -159,7 +160,7 @@ namespace _4sqChat.Logic
             venue.Name = "" + (string)obj["response"]["venue"]["name"];
             venue.Contact = "" + (string)obj["response"]["venue"]["contact"]["phone"];
             venue.address = "" + (string)obj["response"]["venue"]["location"]["address"];
-            venue.category = "" + (string)obj["response"]["venue"]["categories"][0]["name"]; 
+            venue.category = "" + (string)obj["response"]["venue"]["categories"][0]["name"];
             /*nv["name"] = "" + (string)obj["response"]["venue"]["name"];
             nv["contact"] = "" + (string)obj["response"]["venue"]["contact"]["phone"];
             nv["address"] = "" + (string)obj["response"]["venue"]["location"]["address"];
@@ -285,6 +286,58 @@ namespace _4sqChat.Logic
             nv["scoremax"] = "" + Convert.ToString(obj["response"]["user"]["scores"]["max"]);
             Profile targetProfile = new Profile(nv);
             return targetProfile;
+        }
+
+        public bool MakeFriendship(int targetId)
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/" + targetId + 
+                "/request?oauth_token=" + token;
+
+            var nv = new NameValueCollection();
+            string result = null;
+            try
+            {
+                result = HttpPost(reqURL, nv);
+            }
+            catch (WebException e)
+            {
+                if (e.Status == WebExceptionStatus.ProtocolError)
+                    return true;
+                return false;
+            }
+            JObject obj = JObject.Parse(result);
+            nv.Clear();
+
+            return obj["response"]["user"] != null;
+        }
+
+        public bool CheckForFriendship(int targetId)
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/friends";
+            var nv = new NameValueCollection();
+            nv["oauth_token"] = token;
+            string result = HttpGet(reqURL, nv);
+            JObject obj = JObject.Parse(result);
+            nv.Clear();
+
+            int count = Convert.ToInt32(obj["response"]["friends"]["count"]);
+            for (int i = 0; i < count; ++i)
+            {
+                int userId = Convert.ToInt32(obj["response"]["friends"]["items"][i]["id"]);
+                if (userId == targetId)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool ApproveFriendship(int targetId)
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/friends?oauth_token=" + token;
+            var nv = new NameValueCollection();
+            string result = HttpPost(reqURL, nv);
+            JObject obj = JObject.Parse(result);
+            return obj["response"]["user"] != null;
         }
     }
 

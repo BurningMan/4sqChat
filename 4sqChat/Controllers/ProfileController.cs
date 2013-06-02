@@ -15,13 +15,13 @@ namespace _4sqChat.Controllers
         // GET: /Profile/
         public NameValueCollection GetProfileInfo(int targetId)
         {
-            string token = GetCurrentUserToken(); 
+            string token = GetCurrentUserToken();
             Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
             Profile pf = FSQOAuth.GetProfileInfo(targetId);
             Models.FoursquareUserContext db = new FoursquareUserContext();
             int userID = FSQOAuth.GetUserId();
             FoursquareUserModel um = db.FoursquareUsers.Find(userID);
-            NameValueCollection nv = pf.getInfo(true); 
+            NameValueCollection nv = pf.getInfo(true);
             return nv;
         }
         private string GetCurrentUserToken()
@@ -45,6 +45,28 @@ namespace _4sqChat.Controllers
             int targetId = Convert.ToInt32(Request["targetID"]);
             ViewBag.profile = GetProfileInfo(targetId);
             return View();
+        }
+
+        public ActionResult MakeFriends(int id)
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "FoursquareLogin");
+
+            FoursquareOAuth foursquareOAuth = new FoursquareOAuth(GetCurrentUserToken());
+            foursquareOAuth.MakeFriendship(id);
+            MessageModel messageModel = new MessageModel()
+                {
+                    From = Convert.ToInt32(User.Identity.Name),
+                    Message = "Accept",
+                    time = DateTime.Now,
+                    To = id,
+                    type = "Invite"
+                };
+            IMessageRepository repository = new MessageRepository(new FoursquareUserContext());
+            repository.InsertMessage(messageModel);
+            repository.Save();
+            return RedirectToAction("Chat", "Foursquare", new { id = id });
+
         }
 
     }
