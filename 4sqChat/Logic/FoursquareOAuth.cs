@@ -333,7 +333,7 @@ namespace _4sqChat.Logic
 
         public bool ApproveFriendship(int targetId)
         {
-            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/friends?oauth_token=" + token;
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/"+targetId+"/approve?oauth_token=" + token;
             var nv = new NameValueCollection();
             string result = HttpPost(reqURL, nv);
             JObject obj = JObject.Parse(result);

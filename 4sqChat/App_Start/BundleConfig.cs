@@ -10,9 +10,10 @@ namespace _4sqChat
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
-
-            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
-                        "~/Scripts/jquery-ui-{version}.js"));
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui-core").Include("~/Scripts/jquery.ui.core.js", 
+                "~/Scripts/jquery-ui.js"));
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui-slider").Include(
+                        "~/Scripts/jquery.ui.slider.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.unobtrusive*",

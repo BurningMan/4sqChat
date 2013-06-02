@@ -4,38 +4,58 @@
 
     NameValueCollection tmp = (NameValueCollection)ViewBag.profile;
 }
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#rangeSlider').slider();
+    });
 
+
+</script>
 <div id="profile-wrapper" align="center">
     <table width="60%">
         <tr>
             <td valign="top" align="right" width="110px">
                 @{
-                    <div style="padding-right:35px" align="left">
+                    <div style="padding-right: 35px" align="left">
                         <img src="@tmp["Photo"]" width="100px" height="100px"/>
                         <h4>@tmp["firstname"] @tmp["lastname"]</h4>
                     </div>
-                } 
-           
+                }
+
             </td>
-            <td valign="top" align="left" style="padding:0px">
+            <td valign="top" align="left" style="padding: 0px">
                 @{
 
-                    <table style="margin:0px">
-                        <tr><td>@("City: ")</td><td> <i>@tmp["homecity"]</i></td></tr>
-                        <tr><td>@("Sex: ") </td><td><i>@tmp["gender"]</i><br/></td></tr>
-                        <tr><td>@("Score: ")</td><td> <i>@tmp["scoremax"]</i> (* Maximum checkin score all over user history)<br/>  </td></tr> 
+                    <table style="margin: 0px">
+                        <tr>
+                            <td>@("City: ")</td>
+                            <td><i>@tmp["homecity"]</i></td>
+                        </tr>
+                        <tr>
+                            <td>@("Sex: ") </td>
+                            <td><i>@tmp["gender"]</i><br />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@("Score: ")</td>
+                            <td><i>@tmp["scoremax"]</i> (* Maximum checkin score all over user history)<br />
+                            </td>
+                        </tr>
                     </table>
                 }
-                
-                <br/>
-                <a href="~/Foursquare/ChatList"  class="btn btn-success" style="color:#fff">Your Chat History</a>
-                <a href="~/Foursquare/NearbyUsers"  class="btn btn-success" style="color:#fff">Start new Chat!</a>
-                <a href="~/Foursquare/RandomChat" class="btn btn-success" style="color:#fff">Random chat</a>
+
+                <br />
+                <a href="~/Foursquare/ChatList" class="btn btn-success" style="color: #fff">Your Chat History</a>
+                <a href="~/Foursquare/NearbyUsers" class="btn btn-success" style="color: #fff">Start new Chat!</a>
+                <a href="~/Foursquare/RandomChat" class="btn btn-success" style="color: #fff">Random chat</a>
+
             </td>
-        
+
         </tr>
     </table>
 
-    
+    <input id="rangeSlider" type="text" class="span2" value="" data-slider-min="-20" 
+           data-slider-max="20" data-slider-step="1" data-slider-value="[-14, 10]" 
+        data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show" >
 </div>
 

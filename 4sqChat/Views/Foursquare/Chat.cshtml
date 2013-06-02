@@ -7,6 +7,7 @@
     var from = '@(User.Identity.Name)';
     var to = '@(Convert.ToString(ViewBag.to))';
     var token = '@(ViewBag.token)';
+    var isFriend = @(ViewBag.isFriend ? "true" : "false")
     function getMessages() {
         $(document).ready(function () {
             $.getJSON("/api/message/GetMessagesByKeys/?keys=" + from + "_" + to, function (data) {
@@ -19,8 +20,8 @@
                         messageContent += "<span style='color:#008AE6'>Anonymous</span>";
 
                     messageContent += ":\r\n" + data[curLen].Message;
-
-                    if (data[curLen].type == "Invite" && data[curLen].From == to) {
+                    
+                    if (data[curLen].type == "Invite" && data[curLen].From == to && isFriend == false) {
                         messageContent += '<button class="friendApprove btn btn-success" onclick="approveFriend()">Approve</button>';
                     }
                     
