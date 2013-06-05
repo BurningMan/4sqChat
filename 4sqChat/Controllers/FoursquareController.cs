@@ -164,7 +164,7 @@ namespace _4sqChat.Controllers
             String token = GetCurrentUserToken();
             FoursquareOAuth foursquareOAuth = new FoursquareOAuth(token);
             List<int> users = foursquareOAuth.GetNearByUsers(radius);
-            if (GetProfileInfo(Convert.ToInt32(User.Identity.Name))["isPremium"] == "true" && gender != null)
+            if (Convert.ToBoolean(GetProfileInfo(Convert.ToInt32(User.Identity.Name))["isPremium"]) && gender != null)
             {
                 for (int i = 0; i < users.Count; ++i)
                 {

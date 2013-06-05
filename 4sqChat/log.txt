@@ -50,3 +50,10 @@
 2013-06-05 19:19:26,095 [11] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
 2013-06-05 19:23:05,002 [7] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
 2013-06-05 19:57:45,302 [6] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
+2013-06-05 23:34:26,507 [8] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
+2013-06-05 23:34:55,630 [25] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
+2013-06-05 23:35:37,618 [26] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
+2013-06-05 23:37:41,705 [20] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
+2013-06-05 23:40:51,435 [17] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
+2013-06-05 23:42:23,694 [13] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
+2013-06-05 23:42:49,634 [17] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue

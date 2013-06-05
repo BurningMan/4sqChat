@@ -13,7 +13,7 @@
     $(document).ready(function () {
         $('#rangeSlider').slider(
             {
-                max: '@(tmp["isPremium"] == "true" ? 5000 : 200)'
+                max: '@(tmp["isPremium"] == "True" ? 5000 : 200)'
             }
         );
 
@@ -104,7 +104,7 @@
                data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show">
 
         @{
-            if (tmp["isPremium"] == "true")
+            if (tmp["isPremium"] == "True")
             {
                 <select id="genderSelect">
                     <option value="male">Male</option>
