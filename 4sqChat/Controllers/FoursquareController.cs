@@ -173,6 +173,12 @@ namespace _4sqChat.Controllers
                         users.RemoveAt(i--);
                 }
             }
+            if(users.Count == 0)
+            {
+                ViewBag.error = "Sorry. Nobody to chat";
+
+                return View("CustomError");
+            }
             Random random = new Random();
             int pos = random.Next(0, users.Count);
             return RedirectToAction("Chat", new {id = users[pos]});

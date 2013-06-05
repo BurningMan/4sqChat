@@ -361,6 +361,7 @@
     <Content Include="Views\Profile\Index.cshtml" />
     <Content Include="Views\Foursquare\Chat.cshtml" />
     <Content Include="Views\Foursquare\ChatList.cshtml" />
+    <Content Include="Views\Shared\CustomError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
