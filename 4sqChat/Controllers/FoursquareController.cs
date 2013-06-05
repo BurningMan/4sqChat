@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using _4sqChat.Logic;
 using _4sqChat.Models;
+using System.Configuration;
 using log4net;
 
 namespace _4sqChat.Controllers
@@ -16,7 +15,7 @@ namespace _4sqChat.Controllers
     {
         //
         // GET: /Foursquare/
-        ILog logger = LogManager.GetLogger(typeof(FoursquareController));
+        private ILog logger = LogManager.GetLogger(typeof (FoursquareController));
 
         public ActionResult Index()
         {
@@ -25,21 +24,31 @@ namespace _4sqChat.Controllers
             return View();
         }
 
-        public ActionResult NearbyVenues()
+        public ActionResult NearbyVenues(int maxRadius)
         {
             if (!User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "FoursquareLogin");
-            string token = GetCurrentUserToken();
-            logger.Debug("Got token "+token);
-            Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
-            //TODO add parameters
-            List<string> res = FSQOAuth.GetNearbyVenues(1000);
-            if (res == null)
-            {
-                ViewBag.venues = null;
-                return View();
-            }
 
+            FoursquareUserContext foursquareUserContext = new FoursquareUserContext();
+            //TODO maybe change to premium warning notification
+            int userId = Convert.ToInt32(User.Identity.Name);
+            FoursquareUserModel user =
+                foursquareUserContext.FoursquareUsers.
+                First(x => x.FoursquareUserId == userId);
+
+            int premiumRadius = Convert.ToInt32(ConfigurationManager.AppSettings["PremiumRadius"]);
+            if (!user.IsPremium && premiumRadius < maxRadius)
+                maxRadius = premiumRadius; 
+
+            string token = GetCurrentUserToken();
+            logger.Debug("Got token " + token);
+            Logic.FoursquareOAuth FSQOAuth = new FoursquareOAuth(token);
+
+
+
+            List<string> res = FSQOAuth.GetNearbyVenues(maxRadius);
+
+            
             logger.Debug("Got venues " + res.Count);
             List<FoursquareOAuth.Venue> venues = new List<FoursquareOAuth.Venue>();
             if (res.Count == 0)
@@ -53,7 +62,6 @@ namespace _4sqChat.Controllers
                 {
                     venues.Add(FSQOAuth.GetVenuesInfo(re));
                 }
-
             }
             catch (Exception e)
             {
@@ -62,11 +70,40 @@ namespace _4sqChat.Controllers
             logger.Debug("Got venues info");
             ViewBag.venues = venues;
             return View();
+        }
 
+        public ActionResult Friends()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "FoursquareLogin");
+
+            string token = GetCurrentUserToken();
+            FoursquareOAuth foursquareOAuth = new FoursquareOAuth(token);
+            List<int> friends = foursquareOAuth.GetFriends();
+            List<String> names = new List<string>();
+            for (int i = 0; i < friends.Count; ++i)
+            {
+                if (Membership.GetUser(friends[i].ToString()) == null)
+                {
+                    friends.RemoveAt(i);
+                    i--;
+                }
+                else
+                {
+                    NameValueCollection tmp;
+                    tmp = GetProfileInfo(friends[i]);
+                    names.Add(tmp["firstname"]);
+                }
+            }
+
+            ViewBag.users = friends;
+            ViewBag.names = names;
+            return View("NearbyUsers");
         }
 
         public ActionResult NearbyUsers()
         {
+            //TODO redirect to Friends
             if (!User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "FoursquareLogin");
             string token = GetCurrentUserToken();
@@ -75,19 +112,19 @@ namespace _4sqChat.Controllers
             IEnumerable<FoursquareUserModel> foursquareUsers = db.FoursquareUsers;
             foreach (var foursquareUserModel in foursquareUsers)
             {
-                
                 Logic.FoursquareOAuth tmp = new FoursquareOAuth(foursquareUserModel.Token);
                 foursquareUserModel.LastVenueID = tmp.GetLastVenue();
                 UpdateModel(foursquareUserModel);
-                
-                
-                logger.Debug("Got last venue "+foursquareUserModel.FoursquareUserId);
+
+
+                logger.Debug("Got last venue " + foursquareUserModel.FoursquareUserId);
             }
             db.SaveChanges();
             logger.Debug("Got all venues");
-            List<int> res = FSQOAuth.GetNearByUsers();
+            
+            List<int> res = FSQOAuth.GetNearByUsers(1000);
             logger.Debug("got nearby users");
-            List<string> names= new List<string>();
+            List<string> names = new List<string>();
             for (int i = 0; i < res.Count; ++i)
             {
                 NameValueCollection tmp;
@@ -106,6 +143,7 @@ namespace _4sqChat.Controllers
             ViewBag.names = names;
             return View();
         }
+
         public NameValueCollection GetProfileInfo(int targetId)
         {
             string token = GetCurrentUserToken();
@@ -115,21 +153,31 @@ namespace _4sqChat.Controllers
             int userID = FSQOAuth.GetUserId();
             FoursquareUserModel um = db.FoursquareUsers.Find(userID);
             NameValueCollection nv = pf.getInfo(um.IsPremium);
+            nv["isPremium"] = um.IsPremium.ToString();
             return nv;
         }
 
-        public ActionResult RandomChat()
+        public ActionResult RandomChat(int radius, string gender)
         {
             if (!User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "FoursquareLogin");
             String token = GetCurrentUserToken();
             FoursquareOAuth foursquareOAuth = new FoursquareOAuth(token);
-            List<int> users = foursquareOAuth.GetNearByUsers();
+            List<int> users = foursquareOAuth.GetNearByUsers(radius);
+            if (GetProfileInfo(Convert.ToInt32(User.Identity.Name))["isPremium"] == "true" && gender != null)
+            {
+                for (int i = 0; i < users.Count; ++i)
+                {
+                    NameValueCollection nv = GetProfileInfo(users[i]);
+                    if(gender != nv["gender"])
+                        users.RemoveAt(i--);
+                }
+            }
             Random random = new Random();
             int pos = random.Next(0, users.Count);
             return RedirectToAction("Chat", new {id = users[pos]});
         }
-        
+
         public ActionResult Chat(int id)
         {
             if (!User.Identity.IsAuthenticated)
@@ -171,9 +219,9 @@ namespace _4sqChat.Controllers
             return View();
         }
 
-        
 
-        private string  GetCurrentUserToken()
+
+        private string GetCurrentUserToken()
         {
             if (!User.Identity.IsAuthenticated)
                 return null;
@@ -182,9 +230,6 @@ namespace _4sqChat.Controllers
             if (um != null)
                 return um.Token;
             return null;
-
         }
-
-
     }
 }

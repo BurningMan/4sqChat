@@ -6,9 +6,28 @@
 }
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#rangeSlider').slider();
+        $('#rangeSlider').slider(
+            {
+                max: '@(tmp["isPremium"] == "true" ? 5000 : 200)'
+            }
+        );
     });
 
+    function randomChat() {
+        var sliderValue = $('#rangeSlider').val();
+        var gender = null;
+        try {
+            gender = $('#genderSelect').val();
+            if (gender == undefined)
+                gender = null;
+        } catch(e) {
+
+        }
+        var url = "/Foursquare/RandomChat/?radius=" + sliderValue;
+        if (gender != null)
+            url += "&gender=" + gender;
+        window.location.replace(url);
+    }
 
 </script>
 <div id="profile-wrapper" align="center">
@@ -47,15 +66,25 @@
                 <br />
                 <a href="~/Foursquare/ChatList" class="btn btn-success" style="color: #fff">Your Chat History</a>
                 <a href="~/Foursquare/NearbyUsers" class="btn btn-success" style="color: #fff">Start new Chat!</a>
-                <a href="~/Foursquare/RandomChat" class="btn btn-success" style="color: #fff">Random chat</a>
+                <a href="#" class="btn btn-success" style="color: #fff" onclick="randomChat()">Random chat</a>
 
             </td>
 
         </tr>
     </table>
 
-    <input id="rangeSlider" type="text" class="span2" value="" data-slider-min="-20" 
-           data-slider-max="20" data-slider-step="1" data-slider-value="[-14, 10]" 
-        data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show" >
+    <input id="rangeSlider" type="text" class="span2" value="" data-slider-min="50" 
+           data-slider-step="1" data-slider-value="50" 
+           data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show">
+    
+    @{
+        if (tmp["isPremium"] == "true")
+        {
+            <select id="genderSelect">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        }
+    }
 </div>
 

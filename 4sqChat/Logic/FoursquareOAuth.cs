@@ -19,7 +19,6 @@ namespace _4sqChat.Logic
 {
     public class FoursquareOAuth
     {
-
         public struct Venue
         {
             public string id { get; set; }
@@ -29,7 +28,7 @@ namespace _4sqChat.Logic
             public string category { get; set; }
         }
 
-        ILog logger = LogManager.GetLogger(typeof(FoursquareOAuth));
+        private ILog logger = LogManager.GetLogger(typeof (FoursquareOAuth));
 
         //https://github.com/aravamudham/foursquare-oauth-c--library/blob/master/FSquare.aspx.cs
         public oAuth4Square oAuth;
@@ -85,10 +84,10 @@ namespace _4sqChat.Logic
 
         private FSquareToken GetFSquareTokenDetails(string json)
         {
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(FSquareToken));
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof (FSquareToken));
             using (MemoryStream stream = new MemoryStream(Encoding.Unicode.GetBytes(json)))
             {
-                FSquareToken list = (FSquareToken)serializer.ReadObject(stream);
+                FSquareToken list = (FSquareToken) serializer.ReadObject(stream);
                 return list;
             }
         }
@@ -107,6 +106,7 @@ namespace _4sqChat.Logic
         }
         
          */
+
         public string GetLastVenue()
         {
             string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/checkins";
@@ -118,9 +118,9 @@ namespace _4sqChat.Logic
             nv["sort"] = "newestfirst";
             string result = HttpGet(reqURL, nv);
             JObject obj = JObject.Parse(result);
-            if ((int)obj["response"]["checkins"]["items"].Count() == 0)
+            if ((int) obj["response"]["checkins"]["items"].Count() == 0)
                 return null;
-            return (string)obj["response"]["checkins"]["items"][0]["venue"]["id"];
+            return (string) obj["response"]["checkins"]["items"][0]["venue"]["id"];
         }
 
         /// <summary>
@@ -156,11 +156,11 @@ namespace _4sqChat.Logic
             nv.Clear();
             JObject obj = JObject.Parse(result);
             Venue venue = new Venue();
-            venue.id = "" + (string)obj["response"]["venue"]["id"];
-            venue.Name = "" + (string)obj["response"]["venue"]["name"];
-            venue.Contact = "" + (string)obj["response"]["venue"]["contact"]["phone"];
-            venue.address = "" + (string)obj["response"]["venue"]["location"]["address"];
-            venue.category = "" + (string)obj["response"]["venue"]["categories"][0]["name"];
+            venue.id = "" + (string) obj["response"]["venue"]["id"];
+            venue.Name = "" + (string) obj["response"]["venue"]["name"];
+            venue.Contact = "" + (string) obj["response"]["venue"]["contact"]["phone"];
+            venue.address = "" + (string) obj["response"]["venue"]["location"]["address"];
+            venue.category = "" + (string) obj["response"]["venue"]["categories"][0]["name"];
             /*nv["name"] = "" + (string)obj["response"]["venue"]["name"];
             nv["contact"] = "" + (string)obj["response"]["venue"]["contact"]["phone"];
             nv["address"] = "" + (string)obj["response"]["venue"]["location"]["address"];
@@ -180,21 +180,24 @@ namespace _4sqChat.Logic
             NameValueCollection nv = GetLL();
             nv["oauth_token"] = token;
             nv["radius"] = radius.ToString();
+            nv["intent"] = "browse";
             string result = HttpGet(reqURL, nv);
             JObject obj = JObject.Parse(result);
             var venues = new List<string>();
             foreach (var venue in obj["response"]["groups"][0]["items"])
             {
-                venues.Add((string)venue["id"]);
+                venues.Add((string) venue["id"]);
             }
             return venues;
         }
 
-        public List<int> GetNearByUsers()
+
+        
+        public List<int> GetNearByUsers(int radius)
         {
             Models.FoursquareUserContext db = new FoursquareUserContext();
-            //TODO add param
-            List<string> venueList = GetNearbyVenues(1000);
+            
+            List<string> venueList = GetNearbyVenues(radius);
             if (venueList == null)
             {
                 return new List<int>();
@@ -203,7 +206,9 @@ namespace _4sqChat.Logic
             int userId = GetUserId();
             foreach (string s in venueList)
             {
-                IEnumerable<int> q = from o in db.FoursquareUsers where o.LastVenueID == s && o.FoursquareUserId != userId select o.FoursquareUserId;
+                IEnumerable<int> q = from o in db.FoursquareUsers
+                                     where o.LastVenueID == s && o.FoursquareUserId != userId
+                                     select o.FoursquareUserId;
                 res.AddRange(q);
             }
             return res;
@@ -216,7 +221,7 @@ namespace _4sqChat.Logic
             nv["oauth_token"] = token;
             string result = HttpGet(reqURL, nv);
             JObject obj = JObject.Parse(result);
-            return Convert.ToInt32((string)obj["response"]["user"]["id"]);
+            return Convert.ToInt32((string) obj["response"]["user"]["id"]);
         }
 
         /// <summary>
@@ -230,7 +235,6 @@ namespace _4sqChat.Logic
             byte[] response = null;
             using (var wb = new WebClient())
             {
-
                 response = wb.UploadValues(uri, "POST", data);
             }
             Encoding cp1251 = Encoding.GetEncoding("windows-1251");
@@ -243,7 +247,6 @@ namespace _4sqChat.Logic
             Encoding utf8 = Encoding.UTF8;
             string text = utf8.GetString(source);
             return text;
-
         }
 
         private static string HttpGet(string uri, NameValueCollection data)
@@ -290,8 +293,8 @@ namespace _4sqChat.Logic
 
         public bool MakeFriendship(int targetId)
         {
-            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/" + targetId + 
-                "/request?oauth_token=" + token;
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/" + targetId +
+                            "/request?oauth_token=" + token;
 
             var nv = new NameValueCollection();
             string result = null;
@@ -313,18 +316,10 @@ namespace _4sqChat.Logic
 
         public bool CheckForFriendship(int targetId)
         {
-            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/friends";
-            var nv = new NameValueCollection();
-            nv["oauth_token"] = token;
-            string result = HttpGet(reqURL, nv);
-            JObject obj = JObject.Parse(result);
-            nv.Clear();
-
-            int count = Convert.ToInt32(obj["response"]["friends"]["count"]);
-            for (int i = 0; i < count; ++i)
+            List<int> friends = GetFriends();
+            for (int i = 0; i < friends.Count; ++i)
             {
-                int userId = Convert.ToInt32(obj["response"]["friends"]["items"][i]["id"]);
-                if (userId == targetId)
+                if (friends[i] == targetId)
                     return true;
             }
 
@@ -333,11 +328,52 @@ namespace _4sqChat.Logic
 
         public bool ApproveFriendship(int targetId)
         {
-            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/"+targetId+"/approve?oauth_token=" + token;
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/" + targetId + "/approve?oauth_token=" +
+                            token;
             var nv = new NameValueCollection();
             string result = HttpPost(reqURL, nv);
             JObject obj = JObject.Parse(result);
             return obj["response"]["user"] != null;
+        }
+
+        public List<int> GetFriends()
+        {
+            string reqURL = ConfigurationManager.AppSettings["FSQApi"] + "users/self/friends";
+            var nv = new NameValueCollection();
+            nv["oauth_token"] = token;
+            string result = HttpGet(reqURL, nv);
+            JObject obj = JObject.Parse(result);
+            nv.Clear();
+
+            int count = Convert.ToInt32(obj["response"]["friends"]["count"]);
+            List<int> users = new List<int>();
+            for (int i = 0; i < count; ++i)
+            {
+                int userId = Convert.ToInt32(obj["response"]["friends"]["items"][i]["id"]);
+                users.Add(userId);
+            }
+            return users;
+        }
+
+        public List<string> NearbyVenuesInRange(int minRadius, int maxRadius)
+        {
+            HashSet<string> venuesSet = new HashSet<string>();
+            List<string> minRadiusVenues = minRadius <= 0 ? new List<string>() : GetNearbyVenues(minRadius);
+
+            List<string> res = GetNearbyVenues(maxRadius);
+
+            if (res == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < res.Count; ++i)
+            {
+                venuesSet.Add(res[i]);
+            }
+            venuesSet.ExceptWith(minRadiusVenues);
+            res = venuesSet.ToList();
+            return res;
         }
     }
 

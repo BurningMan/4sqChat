@@ -22,6 +22,7 @@ namespace _4sqChat.Controllers
             int userID = FSQOAuth.GetUserId();
             FoursquareUserModel um = db.FoursquareUsers.Find(userID);
             NameValueCollection nv = pf.getInfo(true);
+            nv["isPremium"] = um.IsPremium.ToString();
             return nv;
         }
         private string GetCurrentUserToken()

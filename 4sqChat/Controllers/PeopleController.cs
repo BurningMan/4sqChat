@@ -26,7 +26,8 @@ namespace _4sqChat.Controllers
                 InitializeOauth(token);
                 try
                 {
-                    List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers();
+                    //TODO add param
+                    List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers(1000);
                     List<Profile> nearbyUsers = new List<Profile>();
                     foreach (var nearbyUsersId in nearbyUsersIds)
                     {
@@ -63,8 +64,8 @@ namespace _4sqChat.Controllers
                 try
                 {
 
-
-                    List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers();
+                    //TODO add param
+                    List<int> nearbyUsersIds = foursquareOAuth.GetNearByUsers(1000);
                     return nearbyUsersIds;
                 }
                 catch (Exception e)
