@@ -5,12 +5,19 @@
     NameValueCollection tmp = (NameValueCollection)ViewBag.profile;
 }
 <script type="text/javascript">
+    var userId = '@(User.Identity.Name)';
+    var token = '@(ViewBag.token)';
+    var chats = [];
+    var currentChatNum = 0;
+    loadChatHistory();
     $(document).ready(function () {
         $('#rangeSlider').slider(
             {
                 max: '@(tmp["isPremium"] == "true" ? 5000 : 200)'
             }
         );
+
+        
     });
 
     function randomChat() {
@@ -20,13 +27,31 @@
             gender = $('#genderSelect').val();
             if (gender == undefined)
                 gender = null;
-        } catch(e) {
+        } catch (e) {
 
         }
         var url = "/Foursquare/RandomChat/?radius=" + sliderValue;
         if (gender != null)
             url += "&gender=" + gender;
         window.location.replace(url);
+    }
+    
+    function loadChatHistory() {
+        var url = '/api/chatlist/getchats/?userId=' + userId + '&token=' + token;
+        $.getJSON(url, function (data) {
+            chats = data;
+            fillChats(10);
+        });
+    }
+    
+    function fillChats(nextChatsNumber) {
+        for (var i = currentChatNum; i < chats.length && i < currentChatNum + nextChatsNumber; ++i) {
+           $('#chatHistory').append('<a class="btn btn-success" href="/Foursquare/Chat/' +
+                chats[i] + '">' + chats[i] + '</a>');
+        }
+        currentChatNum = Math.min(currentChatNum + nextChatsNumber, chats.length);
+        if (currentChatNum == chats.length)
+            $('#loadMoreButton').hide();
     }
 
 </script>
@@ -73,18 +98,25 @@
         </tr>
     </table>
 
-    <input id="rangeSlider" type="text" class="span2" value="" data-slider-min="50" 
-           data-slider-step="1" data-slider-value="50" 
-           data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show">
-    
-    @{
-        if (tmp["isPremium"] == "true")
-        {
-            <select id="genderSelect">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-            </select>
+    <div id="randomChatParams">
+        <input id="rangeSlider" type="text" class="span2" value="" data-slider-min="50"
+               data-slider-step="1" data-slider-value="50"
+               data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show">
+
+        @{
+            if (tmp["isPremium"] == "true")
+            {
+                <select id="genderSelect">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            }
         }
-    }
+
+    </div>
+    <div id="chatHistory">
+        
+    </div>
+    <button id="loadMoreButton" class="btn btn-success" onclick="fillChats(10)">Load more</button>
 </div>
 

@@ -45,6 +45,7 @@ namespace _4sqChat.Controllers
                 return RedirectToAction("Index", "FoursquareLogin");
             int targetId = Convert.ToInt32(Request["targetID"]);
             ViewBag.profile = GetProfileInfo(targetId);
+            ViewBag.token = GetCurrentUserToken();
             return View();
         }
 
