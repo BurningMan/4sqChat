@@ -7,17 +7,24 @@
     var from = '@(User.Identity.Name)';
     var to = '@(Convert.ToString(ViewBag.to))';
     var token = '@(ViewBag.token)';
-    var isFriend = @(ViewBag.isFriend ? "true" : "false")
+    var isFriend = '@(ViewBag.isFriend ? "true" : "false")';
+    var profile = null;
     function getMessages() {
         $(document).ready(function () {
             $.getJSON("/api/message/GetMessagesByKeys/?keys=" + from + "_" + to, function (data) {
+                if (isFriend && profile == null)
+                    getUsername();
+                    
                 for (var i = 1; i <= 10 && 0 <= data.length - i; i++) {
                     messageContent = "";
                     curLen = data.length - i;
                     if (data[curLen].From == from)
                         messageContent += "<span style='color:#00994D'>You</span>";
-                    else
-                        messageContent += "<span style='color:#008AE6'>Anonymous</span>";
+                    else {
+                        messageContent += "<span style='color:#008AE6'>" +
+                            (profile == null ? "Anonymous" : ("<a href=/Profile?targetId=" + to +
+                                ">"+profile.FirstName)+"</a>") + "</span>";
+                    } 
 
                     messageContent += ":\r\n" + data[curLen].Message;
                     
@@ -70,7 +77,16 @@
                 });
         });
     }
+    
+    function getUsername() {
+        $.getJSON('/api/profileapi/getprofile/?userid=' + from + '&token=' + token + '&targetId=' + to,
+        function (data) {
+            profile = data;
 
+        });
+    }
+    
+    
 
     setInterval(getMessages, 1500);
 </script>

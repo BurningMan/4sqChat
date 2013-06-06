@@ -44,9 +44,14 @@ namespace _4sqChat.Controllers
             if (!User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "FoursquareLogin");
             int targetId = Convert.ToInt32(Request["targetID"]);
-            ViewBag.profile = GetProfileInfo(targetId);
-            ViewBag.token = GetCurrentUserToken();
-            return View();
+            FoursquareOAuth foursquareOAuth = new FoursquareOAuth(GetCurrentUserToken());
+            if (targetId == Convert.ToInt32(User.Identity.Name) || foursquareOAuth.CheckForFriendship(targetId))
+            {
+                ViewBag.profile = GetProfileInfo(targetId);
+                ViewBag.token = GetCurrentUserToken();
+                return View();
+            }
+            return RedirectToAction("Index", "Foursquare");
         }
 
         public ActionResult MakeFriends(int id)

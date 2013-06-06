@@ -16,19 +16,18 @@ namespace _4sqChat.Controllers
         {
             int uId = Convert.ToInt32(userId);
             int tId = Convert.ToInt32(targetId);
-            int messageCount = Convert.ToInt32(ConfigurationManager.AppSettings["ProfileShowMessageCount"]);
+            
             if (AuthService.ValidateAuthData(uId, token))
             {
                 FoursquareUserContext dbContext = new FoursquareUserContext();
                 IMessageRepository repository = new MessageRepository(dbContext);
                 FoursquareOAuth fsqOAuth = new FoursquareOAuth(token);
-                int c1 = repository.GetMessagesByKey(uId, tId).Count();
-                int c2 = repository.GetMessagesByKey(tId, uId).Count();
-                if (c1 + c2 > messageCount)
+                if (fsqOAuth.CheckForFriendship(tId))
                 {
                     Profile res = fsqOAuth.GetProfileInfo(tId);
-                    return res;
+                    return res; 
                 }
+                
             }
             return null;
         }

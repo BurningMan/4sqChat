@@ -22,6 +22,8 @@
 
     function randomChat() {
         var sliderValue = $('#rangeSlider').val();
+        if (sliderValue == null || sliderValue == "")
+            sliderValue = 50;
         var gender = null;
         try {
             gender = $('#genderSelect').val();
@@ -46,12 +48,29 @@
     
     function fillChats(nextChatsNumber) {
         for (var i = currentChatNum; i < chats.length && i < currentChatNum + nextChatsNumber; ++i) {
+           
+            var curChatName = getUsername(chats[i]);
+           
            $('#chatHistory').append('<a class="btn btn-success" href="/Foursquare/Chat/' +
-                chats[i] + '">' + chats[i] + '</a>');
+                chats[i] + '">' + (curChatName == null ? chats[i] : curChatName.FirstName) + '</a>');
         }
         currentChatNum = Math.min(currentChatNum + nextChatsNumber, chats.length);
         if (currentChatNum == chats.length)
             $('#loadMoreButton').hide();
+    }
+    
+    function getUsername(targetId) {
+        var profile = null;
+        $.ajax({
+            url: '/api/profileapi/getprofile/?userid=' + userId + '&token=' + token + '&targetId=' + targetId,
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                profile = data;
+
+            }
+        });
+        return profile;
     }
 
 </script>
@@ -89,34 +108,45 @@
                 }
 
                 <br />
-                <a href="~/Foursquare/ChatList" class="btn btn-success" style="color: #fff">Your Chat History</a>
-                <a href="~/Foursquare/NearbyUsers" class="btn btn-success" style="color: #fff">Start new Chat!</a>
-                <a href="#" class="btn btn-success" style="color: #fff" onclick="randomChat()">Random chat</a>
-
+                @{
+                    if (User.Identity.Name == Request.Params["targetId"])
+                    {
+                        <a href="~/Foursquare/ChatList" class="btn btn-success" style="color: #fff">Your Chat History</a>
+                        <a href="~/Foursquare/NearbyUsers" class="btn btn-success" style="color: #fff">Start new Chat!</a>
+                        <a href="#" class="btn btn-success" style="color: #fff" onclick=" randomChat() ">Random chat</a>
+                    }
+                }
             </td>
 
         </tr>
     </table>
+    @{
+        if (User.Identity.Name == Request.Params["targetId"])
+        {
+            <div id="randomChatParams">
+                <label>Radius</label>
+                <input id="rangeSlider" type="text" class="span2" value="" data-slider-min="50"
+                       data-slider-step="1" data-slider-value="50"
+                       data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show">
+                <br/>
+                @{
+                    if (tmp["isPremium"] == "True")
+                    {
+                        <label>Gender</label>
+                        <select id="genderSelect">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    }
+                }
 
-    <div id="randomChatParams">
-        <input id="rangeSlider" type="text" class="span2" value="" data-slider-min="50"
-               data-slider-step="1" data-slider-value="50"
-               data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show">
-
-        @{
-            if (tmp["isPremium"] == "True")
-            {
-                <select id="genderSelect">
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </select>
-            }
-        }
-
-    </div>
-    <div id="chatHistory">
+            </div>
+            <div id="chatHistory">
+                <p>Chat history</p>
         
-    </div>
-    <button id="loadMoreButton" class="btn btn-success" onclick="fillChats(10)">Load more</button>
+            </div>
+            <button id="loadMoreButton" class="btn btn-success" onclick=" fillChats(10) ">Load more</button>
+        }
+    }
 </div>
 
