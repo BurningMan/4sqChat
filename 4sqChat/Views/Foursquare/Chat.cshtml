@@ -9,32 +9,43 @@
     var token = '@(ViewBag.token)';
     var isFriend = '@(ViewBag.isFriend ? "true" : "false")';
     var profile = null;
+    var previousDataLen = 0;
     function getMessages() {
         $(document).ready(function () {
             $.getJSON("/api/message/GetMessagesByKeys/?keys=" + from + "_" + to, function (data) {
                 if (isFriend && profile == null)
                     getUsername();
-                    
-                for (var i = 1; i <= 10 && 0 <= data.length - i; i++) {
-                    messageContent = "";
-                    curLen = data.length - i;
+                
+                for (var i = previousDataLen; i < data.length; ++i) {
+                    messageContent = "<div>";
+                    curLen = i;
                     if (data[curLen].From == from)
                         messageContent += "<span style='color:#00994D'>You</span>";
                     else {
                         messageContent += "<span style='color:#008AE6'>" +
                             (profile == null ? "Anonymous" : ("<a href=/Profile?targetId=" + to +
-                                ">"+profile.FirstName)+"</a>") + "</span>";
-                    } 
-
-                    messageContent += ":\r\n" + data[curLen].Message;
-                    
-                    if (data[curLen].type == "Invite" && data[curLen].From == to && isFriend == false) {
-                        messageContent += '<button class="friendApprove btn btn-success" onclick="approveFriend()">Approve</button>';
+                                ">" + profile.FirstName) + "</a>") + "</span>";
                     }
-                    
-                    $("#mes" + (11 - i)).html(messageContent);
-                }
 
+                    if (!(data[curLen].type == "Invite" && data[curLen].From == to && isFriend == 'false')) {
+                        if(data[curLen].type != "Invite")
+                            messageContent += ":\r\n" + data[curLen].Message;
+                        else
+                            continue;
+                    }
+
+                    if (data[curLen].type == "Invite" && data[curLen].From == to && isFriend == 'false') {
+                        messageContent += '<span style="color:green; margin-left:10px">User wants to add you to friends</span><button class="friendApprove btn btn-mini" onclick="approveFriend()" style="margin-left:15px">Accept friendship</button>';
+                        $('#makeFriendsButton').hide();
+                    }
+                    messageContent += "</div>";
+                    $("#ctable").append(messageContent);
+                }
+                if (previousDataLen != data.length)
+                    $("#ctable").animate({ scrollTop: $("#ctable").prop("scrollHeight") - $("#ctable").height() }, 1000);
+                previousDataLen = data.length;
+                
+                
             });
         });
 
@@ -79,11 +90,17 @@
     }
     
     function getUsername() {
-        $.getJSON('/api/profileapi/getprofile/?userid=' + from + '&token=' + token + '&targetId=' + to,
-        function (data) {
-            profile = data;
+        
+        $.ajax({
+            url: '/api/profileapi/getprofile/?userid=' + from + '&token=' + token + '&targetId=' + to,
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                profile = data;
 
+            }
         });
+        
     }
     
     
@@ -91,18 +108,9 @@
     setInterval(getMessages, 1500);
 </script>
 <div id="chat">
-    <table id="ctable">
-        <tr id="mes1"></tr>
-        <tr id="mes2"></tr>
-        <tr id="mes3"></tr>
-        <tr id="mes4"></tr>
-        <tr id="mes5"></tr>
-        <tr id="mes6"></tr>
-        <tr id="mes7"></tr>
-        <tr id="mes8"></tr>
-        <tr id="mes9"></tr>
-        <tr id="mes10"></tr>
-    </table>
+    <div id="ctable" style="overflow-y: auto; height: 400px">
+        
+    </div>
     <table width="100%" stlye="padding:0px">
         <tr>
             <td>

@@ -1,8 +1,8 @@
 ﻿@{
-    ViewBag.Title = "NearbyUsers";
+    ViewBag.Title = "Friends";
 }
 
-<h2 style="color:#444; font-size: 14pt;margin-left: 100px; width:200px;">Nearby Users</h2><br/>
+<h2 style="color:#444; font-size: 14pt;margin-left: 100px; width:200px;">Friends</h2><br/>
 
 <div id="chat">
 @{
@@ -14,7 +14,7 @@
         @(names[i])
      
         <a class="schat" href="Chat/@(users[i])">Start chat!</a>
-        @Html.DisplayText("<br>");
+        <br/><br />
     }
 }
 </div>

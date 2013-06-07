@@ -34,9 +34,9 @@ namespace _4sqChat.Controllers
             List<MessageModel> r = new List<MessageModel>();
             
             IEnumerable<MessageModel> res =
-                repository.GetMessagesByKey(from, to).OrderByDescending(m => m.time).Take(10);
+                repository.GetMessagesByKey(from, to).OrderByDescending(m => m.time);
             r.AddRange(res);
-            res = repository.GetMessagesByKey(to, from).OrderByDescending(m => m.time).Take(10);
+            res = repository.GetMessagesByKey(to, from).OrderByDescending(m => m.time);
             r.AddRange(res);
             r.Sort(CompareMessagesByDate);
             return r;

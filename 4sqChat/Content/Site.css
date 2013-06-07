@@ -801,7 +801,7 @@ tr.pager td {
 }
 
 
-
+/*
  #chat a {
         -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -823,4 +823,12 @@ tr.pager td {
         padding: 6px;
         text-decoration: none;
         background: #00CC66;
-    }
+    }*/
+
+.ch-history {
+    cursor: pointer;
+}
+
+.ch-history:hover {
+    background: #d5d5d5;  
+}

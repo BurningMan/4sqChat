@@ -58,3 +58,9 @@
 2013-06-05 23:42:23,694 [13] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
 2013-06-05 23:42:49,634 [17] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
 2013-06-06 00:19:12,051 [8] _4sqChat.Logic.FoursquareOAuth DEBUG Got last venue
+2013-06-06 23:43:45,585 [14] _4sqChat.Controllers.FoursquareController DEBUG Got last venue 21826423
+2013-06-06 23:43:45,819 [14] _4sqChat.Controllers.FoursquareController DEBUG Got last venue 21983557
+2013-06-06 23:43:45,984 [14] _4sqChat.Controllers.FoursquareController DEBUG Got last venue 49994321
+2013-06-06 23:43:48,265 [14] _4sqChat.Controllers.FoursquareController DEBUG Got all venues
+2013-06-06 23:43:48,447 [14] _4sqChat.Controllers.FoursquareController DEBUG got nearby users
+2013-06-06 23:43:48,453 [14] _4sqChat.Controllers.FoursquareController DEBUG got profile info
